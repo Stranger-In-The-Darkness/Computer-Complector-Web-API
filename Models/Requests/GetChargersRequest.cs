@@ -141,5 +141,22 @@ namespace ComputerComplectorWebAPI.Models
                 Expression = string.Join(" AND ", cond);
             }
         }
+
+        public IEnumerable<Charger> Filter (IEnumerable<Charger> chargers, IEnumerable<Motherboard> motherboards, IEnumerable<Videocard> videocards)
+        {
+            return chargers.
+                Where(e => IDEAmount != null ? e.IDEAmount == int.Parse(IDEAmount) : true).
+                Where(e => MotherboardConnector != null ? e.MotherboardConnector == MotherboardConnector : true).
+                Where(e => 
+                {
+                    var m = motherboards.FirstOrDefault(i => i.ID == SelectedMotherboard);
+                    return m != null ? e.MotherboardConnector == m.Pin && e.ConnectorType == m.CPUPin : true;
+                }).
+                Where(e =>
+                {
+                    var v = videocards.FirstOrDefault(i => i.ID == SelectedMotherboard);
+                    return v != null ? e.VideocardConnector == v.Pin : true;
+                });
+        }
     }
 }

@@ -22,7 +22,6 @@ namespace ComputerComplectorWebAPI.Models
         public int          MaxMemory           { get; set; }
         public int          RAMMaxFreq          { get; set; }
         public List<string> Slots               { get; set; }
-        public string       Additions           { get; set; }
         public string       Pin                 { get; set; }
         public string       CPUPin              { get; set; }
     }

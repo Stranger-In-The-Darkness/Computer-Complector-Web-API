@@ -19,7 +19,6 @@ namespace ComputerComplectorWebAPI.Models
 		public int      USB2Ports           { get; set; }
         public int      USB3Ports           { get; set; }
         public string   Additions           { get; set; }
-        public string   BackLightColor      { get; set; }
-        public int      VideoacrdMaxLength  { get; set; }
+        public int      VideocardMaxLength  { get; set; }
     }
 }

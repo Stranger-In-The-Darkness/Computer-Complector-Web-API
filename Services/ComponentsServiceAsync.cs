@@ -6,6 +6,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 
+using Microsoft.Extensions.Caching.Memory;
+
 using ComputerComplectorWebAPI.Interfaces;
 using ComputerComplectorWebAPI.Models;
 
@@ -16,6 +18,16 @@ namespace ComputerComplectorWebAPI.Services
     /// </summary>
     public class ComponentsServiceAsync : IComponentsServiceAsync
     {
+        private IUtilityAsync _utility;
+
+        private IMemoryCache _cache;
+
+        public ComponentsServiceAsync(IUtilityAsync utility, IMemoryCache cache)
+        {
+            _utility = utility;
+
+            _cache = cache;
+        }
         /// <summary>
         /// Get record by ID. Null if incorrect ID
         /// </summary>
@@ -28,20 +40,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM BODY WHERE ID = @id";
-            var connection = Utility.Connection;
 
             Body element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -58,13 +64,13 @@ namespace ComputerComplectorWebAPI.Services
                         USB2Ports = (int)reader["USB2.0Amount"],
                         USB3Ports = (int)reader["USB3.0Amount"],
                         Additions = reader["Additions"].ToString().Trim(),
-                        VideoacrdMaxLength = (int)reader["VideocardMaxLength"]
+                        VideocardMaxLength = (int)reader["VideocardMaxLength"]
                     };
                 }
-            }
-            finally
-            {
-                connection.Close();
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
             return element;
         }
@@ -82,20 +88,13 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM CHARGER b WHERE b.ID = @id";
 
-            var connection = Utility.Connection;
-
             Charger element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -114,11 +113,12 @@ namespace ComputerComplectorWebAPI.Services
                         MotherboardConnector = reader["MotherboardConnector"].ToString().Trim()
                     };
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -134,20 +134,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM COOLER b JOIN COOLER_SOCKET cs ON b.ID = cs.CoolerID WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             Cooler element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -169,11 +163,12 @@ namespace ComputerComplectorWebAPI.Services
                 {
                     element.Socket.Add(reader["Socket"].ToString().Trim());
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -189,20 +184,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM CPU b WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             CPU element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -222,11 +211,12 @@ namespace ComputerComplectorWebAPI.Services
                         Overcloacking = (bool)reader["Overclocking"]
                     };
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -242,20 +232,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM HDD b JOIN HDD_INTERFACE hd on b.ID = hd.HDDID WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             HDD element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -276,11 +260,12 @@ namespace ComputerComplectorWebAPI.Services
                         element.Interface.Add(reader["Interface"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -296,20 +281,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM MOTHERBOARD b JOIN MOTHERBOARD_SLOTS ms on b.ID = ms.MotherboardID WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             Motherboard element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -337,11 +316,12 @@ namespace ComputerComplectorWebAPI.Services
                 {
                     element.Slots.Add(reader["Slot"].ToString().Trim());
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -357,20 +337,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM RAM b WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             RAM element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -388,11 +362,12 @@ namespace ComputerComplectorWebAPI.Services
                         CL = reader["CASLatency"].ToString().Trim()
                     };
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -408,20 +383,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM SSD b JOIN SSD_INTERFACE si on b.ID = si.SSDID WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             SSD element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -441,11 +410,12 @@ namespace ComputerComplectorWebAPI.Services
                 {
                     element.Interface.Add(reader["Interface"].ToString().Trim());
                 }
+
+                reader.Close();
+
+                _cache.Set((expression, id), element, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -461,20 +431,14 @@ namespace ComputerComplectorWebAPI.Services
                 throw new IndexOutOfRangeException("Incorrect index");
             }
             string expression = "SELECT * FROM VIDEOCARD b JOIN VIDEOCARD_CONNECTOR vc on b.ID = vc.VideocardID WHERE b.ID = @id";
-            var connection = Utility.Connection;
 
             Videocard element = null;
 
-            try
+            SqlParameter param = new SqlParameter("@id", id);
+
+            if (!_cache.TryGetValue((expression, id), out element))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                SqlParameter param = new SqlParameter("@id", id);
-                command.Parameters.Add(param);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, param));
 
                 if (reader.Read())
                 {
@@ -498,11 +462,15 @@ namespace ComputerComplectorWebAPI.Services
                 {
                     element.Connectors.Add(reader["Connector"].ToString().Trim());
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, id),
+                    element,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return element;
         }
 
@@ -514,17 +482,13 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM BODY";
 
-            List<Body> bodies = new List<Body>();
+            List<Body> bodies;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out bodies))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                bodies = new List<Body>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -542,20 +506,28 @@ namespace ComputerComplectorWebAPI.Services
                             USB2Ports = (int)reader["USB2.0Amount"],
                             USB3Ports = (int)reader["USB3.0Amount"],
                             Additions = reader["Additions"].ToString().Trim(),
-                            VideoacrdMaxLength = (int)reader["VideocardMaxLength"]
+                            VideocardMaxLength = (int)reader["VideocardMaxLength"]
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    bodies,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return bodies;
         }
 
         public async Task<IEnumerable<Body>> GetBodies(GetBodiesRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetBodies();
+            }
             string expression = "SELECT * FROM BODY";
 
             if (request.Expression != null)
@@ -563,22 +535,13 @@ namespace ComputerComplectorWebAPI.Services
                 expression = $"{expression} WHERE {request.Expression}";
             }
 
-            List<Body> bodies = new List<Body>();
+            List<Body> bodies;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out bodies))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                bodies = new List<Body>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -596,15 +559,19 @@ namespace ComputerComplectorWebAPI.Services
                             USB2Ports = (int)reader["USB2.0Amount"],
                             USB3Ports = (int)reader["USB3.0Amount"],
                             Additions = reader["Additions"].ToString().Trim(),
-                            VideoacrdMaxLength = (int)reader["VideocardMaxLength"]
+                            VideocardMaxLength = (int)reader["VideocardMaxLength"]
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    bodies,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return bodies;
         }
 
@@ -616,17 +583,13 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM CHARGER";
 
-            List<Charger> chargers = new List<Charger>();
+            List<Charger> chargers;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out chargers))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                chargers = new List<Charger>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -647,11 +610,12 @@ namespace ComputerComplectorWebAPI.Services
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(expression, chargers, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return chargers;
         }
 
@@ -662,6 +626,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<Charger>> GetChargers(GetChargersRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetChargers();
+            }
             string expression = "SELECT * FROM CHARGER";
 
             if (request.Expression != null)
@@ -669,22 +637,13 @@ namespace ComputerComplectorWebAPI.Services
                 expression = $"{expression} WHERE {request.Expression}";
             }
 
-            List<Charger> chargers = new List<Charger>();
+            List<Charger> chargers;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out chargers))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                chargers = new List<Charger>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -705,11 +664,15 @@ namespace ComputerComplectorWebAPI.Services
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    chargers,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return chargers;
         }
 
@@ -721,17 +684,13 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM COOLER c JOIN COOLER_SOCKET cs on c.ID = cs.CoolerID";
 
-            List<Cooler> coolers = new List<Cooler>();
+            List<Cooler> coolers;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out coolers))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                coolers = new List<Cooler>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -758,11 +717,15 @@ namespace ComputerComplectorWebAPI.Services
                         coolers.Last().Socket.Add(reader["Socket"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    coolers,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return coolers;
         }
 
@@ -773,6 +736,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<Cooler>> GetCoolers(GetCoolersRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetCoolers();
+            }
             string expression = "SELECT * FROM COOLER c JOIN COOLER_SOCKET cs on c.ID = cs.CoolerID";
 
             if (request.Expression != null)
@@ -780,22 +747,13 @@ namespace ComputerComplectorWebAPI.Services
                 expression = $"{expression} WHERE {request.Expression}";
             }
 
-            List<Cooler> coolers = new List<Cooler>();
+            List<Cooler> coolers;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out coolers))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                coolers = new List<Cooler>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -822,11 +780,15 @@ namespace ComputerComplectorWebAPI.Services
                         coolers.Last().Socket.Add(reader["Socket"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    coolers,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return coolers;
         }
 
@@ -838,17 +800,13 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM CPU";
 
-            List<CPU> cpus = new List<CPU>();
+            List<CPU> cpus;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out cpus))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                cpus = new List<CPU>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -870,11 +828,15 @@ namespace ComputerComplectorWebAPI.Services
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    cpus,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return cpus;
         }
 
@@ -885,6 +847,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<CPU>> GetCPUs(GetCPUsRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetCPUs();
+            }
             string expression = "SELECT * FROM CPU";
 
             if (request.Expression != null)
@@ -892,22 +858,13 @@ namespace ComputerComplectorWebAPI.Services
                 expression = $"{expression} WHERE {request.Expression}";
             }
 
-            List<CPU> cpus = new List<CPU>();
+            List<CPU> cpus;
 
-            var connection = Utility.Connection;
-            try
+            if (_cache.TryGetValue((expression, request.Parameters), out cpus))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                cpus = new List<CPU>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -929,11 +886,15 @@ namespace ComputerComplectorWebAPI.Services
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    cpus,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return cpus;
         }
 
@@ -945,17 +906,13 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM HDD h JOIN HDD_INTERFACE hd on h.ID = hd.HDDID";
 
-            List<HDD> hdds = new List<HDD>();
+            List<HDD> hdds;
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out hdds))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                hdds = new List<HDD>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -979,11 +936,15 @@ namespace ComputerComplectorWebAPI.Services
                         hdds.Last().Interface.Add(reader["Interface"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    hdds,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return hdds;
         }
 
@@ -994,6 +955,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<HDD>> GetHDDs(GetHDDsRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetHDDs();
+            }
             string expression = "SELECT * FROM HDD h JOIN HDD_INTERFACE hd on h.ID = hd.HDDID";
 
             if (request.Expression != null)
@@ -1003,20 +968,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<HDD> hdds = new List<HDD>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out hdds))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                hdds = new List<HDD>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -1041,11 +997,15 @@ namespace ComputerComplectorWebAPI.Services
                         hdds.Last().Interface.Add(reader["Interface"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    hdds,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return hdds;
         }
 
@@ -1059,15 +1019,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<Motherboard> motherboards = new List<Motherboard>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out motherboards))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                motherboards = new List<Motherboard>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -1100,11 +1056,15 @@ namespace ComputerComplectorWebAPI.Services
                         motherboards.Last().Slots.Add(reader["Slot"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    motherboards,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return motherboards;
         }
 
@@ -1115,6 +1075,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<Motherboard>> GetMotherboards(GetMotherboardsRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetMotherboards();
+            }
             string expression = "SELECT * FROM MOTHERBOARD m JOIN MOTHERBOARD_SLOTS ms on m.ID = ms.MotherboardID";
 
             if (request.Expression != null)
@@ -1124,20 +1088,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<Motherboard> motherboards = new List<Motherboard>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out motherboards))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                motherboards = new List<Motherboard>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -1170,11 +1125,15 @@ namespace ComputerComplectorWebAPI.Services
                         motherboards.Last().Slots.Add(reader["Slot"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    motherboards,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return motherboards;
         }
 
@@ -1188,15 +1147,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<RAM> rams = new List<RAM>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out rams))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                rams = new List<RAM>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -1216,11 +1171,15 @@ namespace ComputerComplectorWebAPI.Services
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    rams,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return rams;
         }
 
@@ -1231,6 +1190,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<RAM>> GetRAMs(GetRAMsRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetRAMs();
+            }
             string expression = "SELECT * FROM RAM";
 
             if (request.Expression != null)
@@ -1240,20 +1203,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<RAM> rams = new List<RAM>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out rams))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                rams = new List<RAM>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -1273,11 +1227,15 @@ namespace ComputerComplectorWebAPI.Services
                         }
                     );
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    rams,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return rams;
         }
 
@@ -1291,15 +1249,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<SSD> ssds = new List<SSD>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out ssds))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                ssds = new List<SSD>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -1323,11 +1277,15 @@ namespace ComputerComplectorWebAPI.Services
                         ssds.Last().Interface.Add(reader["Interface"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    ssds,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return ssds;
         }
 
@@ -1338,6 +1296,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<SSD>> GetSSDs(GetSSDsRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetSSDs();
+            }
             string expression = "SELECT * FROM SSD s JOIN SSD_INTERFACE si ON s.ID = si.SSDID";
 
             if (request.Expression != null)
@@ -1347,20 +1309,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<SSD> ssds = new List<SSD>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out ssds))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                ssds = new List<SSD>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -1384,11 +1337,15 @@ namespace ComputerComplectorWebAPI.Services
                         ssds.Last().Interface.Add(reader["Interface"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    ssds,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return ssds;
         }
 
@@ -1402,15 +1359,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<Videocard> videocards = new List<Videocard>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue(expression, out videocards))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                videocards = new List<Videocard>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression));
 
                 while (reader.Read())
                 {
@@ -1439,11 +1392,15 @@ namespace ComputerComplectorWebAPI.Services
                         videocards.Last().Connectors.Add(reader["Connector"].ToString().Trim());
                     }
                 }
+
+                reader.Close();
+
+                _cache.Set(
+                    expression,
+                    videocards,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
-            finally
-            {
-                connection.Close();
-            }
+
             return videocards;
         }
 
@@ -1454,6 +1411,10 @@ namespace ComputerComplectorWebAPI.Services
         /// <returns></returns>
         public async Task<IEnumerable<Videocard>> GetVideocards(GetVideocardsRequest request)
         {
+            if (!request.Parameters.Any())
+            {
+                return await GetVideocards();
+            }
             string expression = "SELECT * FROM VIDEOCARD v JOIN VIDEOCARD_CONNECTOR vc on v.ID = vc.VideocardID";
 
             if (request.Expression != null)
@@ -1463,20 +1424,11 @@ namespace ComputerComplectorWebAPI.Services
 
             List<Videocard> videocards = new List<Videocard>();
 
-            var connection = Utility.Connection;
-            try
+            if (!_cache.TryGetValue((expression, request.Parameters), out videocards))
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                videocards = new List<Videocard>();
 
-                SqlCommand command = new SqlCommand(expression, connection);
-
-                foreach (var param in request.Parameters)
-                {
-                    command.Parameters.Add(param);
-                }
-
-                var reader = await command.ExecuteReaderAsync();
+                var reader = await Task.Run(() => _utility.Execute(expression, request.Parameters));
 
                 while (reader.Read())
                 {
@@ -1505,10 +1457,13 @@ namespace ComputerComplectorWebAPI.Services
                         videocards.Last().Connectors.Add(reader["Connector"].ToString().Trim());
                     }
                 }
-            }
-            finally
-            {
-                connection.Close();
+
+                reader.Close();
+
+                _cache.Set(
+                    (expression, request.Parameters),
+                    videocards,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
             }
 
             return videocards;
@@ -1539,43 +1494,39 @@ namespace ComputerComplectorWebAPI.Services
                 {
                     expression = $"{expression} WHERE Component like '%{component.ToLower()}%'";
 
-                    Dictionary<string, (bool, string, List<string>)> fields = new Dictionary<string, (bool Addition, string Text, List<string> Values)>();
+                    Dictionary<string, (bool, string, List<string>)> fields;
 
-                    var connection = Utility.Connection;
-                    try
+                    if (!_cache.TryGetValue(expression, out fields))
                     {
-                        if (connection.State != ConnectionState.Open)
-                            await connection.OpenAsync();
-
-                        SqlCommand command = new SqlCommand(expression, connection);
-
-                        var reader = await command.ExecuteReaderAsync();
-
-                        while (reader.Read())
+                        fields = new Dictionary<string, (bool Addition, string Text, List<string> Values)>();
+                        using (SqlDataReader reader = await _utility.Execute(expression))
                         {
-                            fields.Add(reader["Field"].ToString().Trim(), ((bool)reader["Addition"], reader["AdditionText"].ToString().Trim(), new List<string>()));
+                            while (reader.Read())
+                            {
+                                string key = reader["Field"].ToString().Trim();
+                                bool addition = (bool)reader["Addition"];
+                                string additionText = reader["AdditionText"].ToString().Trim();
+                                fields.Add(key, (addition, additionText, new List<string>()));
+                            }
                         }
-
-                        reader.Close();
 
                         for (int i = 0; i < fields.Count; i++)
                         {
                             var prop = $"{properties} WHERE ID = '{component.ToLower()}_{fields.ElementAt(i).Key}'";
 
-                            SqlCommand getProperties = new SqlCommand(prop, connection);
-
-                            reader = getProperties.ExecuteReader();
-
-                            while (reader.Read())
+                            using (SqlDataReader reader = await _utility.Execute(prop))
                             {
-                                fields.ElementAt(i).Value.Item3.Add(reader["Value"].ToString().Trim());
+                                while (reader.Read())
+                                {
+                                    fields.ElementAt(i).Value.Item3.Add(reader["Value"].ToString().Trim());
+                                }
                             }
-                            reader.Close();
                         }
-                    }
-                    finally
-                    {
-                        connection.Close();
+
+                        _cache.Set(
+                            expression,
+                            fields,
+                            new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(24)));
                     }
                     return fields;
                 }

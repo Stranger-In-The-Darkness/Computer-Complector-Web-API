@@ -15,10 +15,10 @@ namespace ComputerComplectorWebAPI.Models
         public int      Power                   { get; set; }
         public string   Sertificate             { get; set; }
         public int      VideoConnectorsAmount   { get; set; }
-        public string   ConnectorType           { get; set; }
+        public string   VideocardConnector      { get; set; }
 	    public int      SATAAmount              { get; set; }
         public int      IDEAmount               { get; set; }
         public string   MotherboardConnector    { get; set; }
-	    public string   Addition                { get; set; }
+        public string   ConnectorType           { get; set; }
     }
 }

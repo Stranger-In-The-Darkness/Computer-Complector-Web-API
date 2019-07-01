@@ -13,6 +13,9 @@ using Microsoft.Extensions.Options;
 
 using ComputerComplectorWebAPI.Interfaces;
 using ComputerComplectorWebAPI.Services;
+using ComputerComplectorWebAPI.Models;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerComplectorWebService
 {
@@ -28,8 +31,12 @@ namespace ComputerComplectorWebService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IComponentsServiceAsync, ComponentsServiceAsync>();
+            string connection = Configuration.GetConnectionString("DefaultConnection");
 
+            services.AddScoped<IUtilityAsync>((conn) => new Utility(connection));
+
+            services.AddScoped<IComponentsServiceAsync, ComponentsServiceAsync>();
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -45,7 +52,8 @@ namespace ComputerComplectorWebService
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }

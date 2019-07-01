@@ -20,7 +20,7 @@ namespace ComputerComplectorWebService
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile("appsettings.json")
                 .AddCommandLine(args)
                 .Build();
 

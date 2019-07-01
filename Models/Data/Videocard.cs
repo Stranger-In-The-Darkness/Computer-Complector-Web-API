@@ -18,7 +18,7 @@ namespace ComputerComplectorWebAPI.Models
         public string       Memory     { get; set; }
 	    public List<string> Connectors { get; set; }
         public string       Family     { get; set; }
-        public string       Length       { get; set; }
+        public string       Length     { get; set; }
         public string       Pin        { get; set; }
     }
 }

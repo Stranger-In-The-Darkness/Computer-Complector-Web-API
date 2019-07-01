@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using ComputerComplectorWebAPI.Interfaces;
 using ComputerComplectorWebAPI.Models;
 
+using Microsoft.Extensions.Configuration;
+
 namespace ComputerComplectorWebAPI.Controllers
 {
     /// <summary>
@@ -15,7 +17,7 @@ namespace ComputerComplectorWebAPI.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class ComponentsController : ControllerBase
+    public class ComponentsController : Controller
     {
         private IComponentsServiceAsync _componentService;
 

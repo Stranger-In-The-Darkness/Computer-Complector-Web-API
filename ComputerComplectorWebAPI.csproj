@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -10,20 +10,48 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Content Remove="wwwroot\src\img\BODY.png" />
+    <Content Remove="wwwroot\src\img\CHARGER.png" />
+    <Content Remove="wwwroot\src\img\COOLER.png" />
+    <Content Remove="wwwroot\src\img\CPU.png" />
+    <Content Remove="wwwroot\src\img\HDD.png" />
+    <Content Remove="wwwroot\src\img\MOTHERBOARD.png" />
+    <Content Remove="wwwroot\src\img\RAM.png" />
+    <Content Remove="wwwroot\src\img\SSD.png" />
+    <Content Remove="wwwroot\src\img\VIDEOCARD.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Settings\" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\src\img\BODY.png" />
+    <None Include="wwwroot\src\img\CHARGER.png" />
+    <None Include="wwwroot\src\img\COOLER.png" />
+    <None Include="wwwroot\src\img\CPU.png" />
+    <None Include="wwwroot\src\img\HDD.png" />
+    <None Include="wwwroot\src\img\MOTHERBOARD.png" />
+    <None Include="wwwroot\src\img\RAM.png" />
+    <None Include="wwwroot\src\img\SSD.png" />
+    <None Include="wwwroot\src\img\VIDEOCARD.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.11" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Model">
       <HintPath>..\Model\bin\Debug\Model.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

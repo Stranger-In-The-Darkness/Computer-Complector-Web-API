@@ -110,5 +110,19 @@ namespace ComputerComplectorWebAPI.Models
                 Expression = string.Join(" AND ", cond);
             }
         }
+
+        public IEnumerable<Cooler> Filter(IEnumerable<Cooler> coolers, IEnumerable<CPU> cpus, IEnumerable<Motherboard> motherboards)
+        {
+            return coolers.
+                Where(e => Company != null ? e.Company == Company : true).
+                Where(e => Purpose != null ? e.Purpose == Purpose : true).
+                Where(e => Type != null ? e.Type == Type : true).
+                Where(e => Socket != null ? e.Socket.Contains(Socket) : true).
+                Where(e => Material != null ? e.Material == Material : true).
+                Where(e => VentDiam != null ? e.VentDiam == Convert.ToDouble(VentDiam) : true).
+                Where(e => TurnAdj != null ? e.TurnAdj == Convert.ToBoolean(TurnAdj) : true).
+                Where(e => SelectedCpu.HasValue ? e.Socket.Contains(cpus.FirstOrDefault(c => c.ID == SelectedCpu.Value)?.Socket) : true).
+                Where(e => SelectedMotherboard.HasValue ? e.Socket.Contains(motherboards.FirstOrDefault(m => m.ID == SelectedMotherboard.Value)?.Socket) : true);
+        }
     }
 }

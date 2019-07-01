@@ -89,5 +89,23 @@ namespace ComputerComplectorWebAPI.Models
                 Expression = string.Join(" AND ", cond);
             }
         }
+
+        public IEnumerable<Body> Filter(IEnumerable<Body> bodies, IEnumerable<Motherboard> motherboards, IEnumerable<Videocard> videocards)
+        {
+            return bodies.
+                Where(e => Company != null ? e.Company == Company : true).
+                Where(e => Formfactor != null ? e.Formfactor == Formfactor : true).
+                Where(e => Type != null ? e.Type == Type : true).
+                Where(e => BuildInCharger != null ? e.BuildInCharger == BuildInCharger : true).
+                Where(e => ChargerPower != null ? (e.ChargerPower >= int.Parse(ChargerPower.Split('-')[0])) : true).
+                Where(e => ChargerPower != null ? (e.ChargerPower <= int.Parse(ChargerPower.Split('-')[1])) : true).
+                Where(e => Usb3Ports != null ? e.USB3Ports == int.Parse(Usb3Ports) : true).
+                Where(e => { var m = motherboards.FirstOrDefault(i => i.ID == SelectedMotherboard); return m != null ? e.Formfactor == m.Formfactor : true; }).
+                Where(e => { var v = videocards.FirstOrDefault(i => i.ID == SelectedVideocard); return v != null ? e.VideocardMaxLength >= int.Parse(v.Length) : true; });
+        }
+
+        public GetBodiesRequest()
+        {
+        }
     }
 }
