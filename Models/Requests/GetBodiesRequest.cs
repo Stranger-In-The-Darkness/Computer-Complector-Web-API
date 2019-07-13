@@ -8,12 +8,12 @@ namespace ComputerComplectorWebAPI.Models
 {
     public class GetBodiesRequest
     {
-        public string   Company           { get; private set; }
-        public string   Formfactor        { get; private set; }
-        public string   Type              { get; private set; }
-        public bool?    BuildInCharger    { get; private set; }
-        public string   ChargerPower      { get; private set; }
-        public string   Usb3Ports         { get; private set; }
+        public string[]   Company           { get; private set; }
+        public string[]   Formfactor        { get; private set; }
+        public string[]   Type              { get; private set; }
+        public bool[]     BuildInCharger    { get; private set; }
+        public string[]   ChargerPower      { get; private set; }
+        public string[]   Usb3Ports         { get; private set; }
         //public string   BacklightColor    { get; private set; }
 
         public int? SelectedMotherboard { get; private set; }
@@ -22,52 +22,88 @@ namespace ComputerComplectorWebAPI.Models
         public string Expression { get; } = null;
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetBodiesRequest(string company, string formfactor, string type, bool? buildInCharger, string chargerPower, 
-            string usbPorts, int? selectedMotherboard, int? selectedVideocard)
+        public GetBodiesRequest(string[] company, string[] formfactor, string[] type, bool[] buildInCharger, string[] chargerPower,
+            string[] usbPorts, int? selectedMotherboard, int? selectedVideocard)
         {
             List<string> cond = new List<string>();
 
             Company = company;
             if (Company != null)
             {
-                cond.Add("Company=@company");
-                Parameters.Add(new SqlParameter("@company", Company));
+                List<string> con = new List<string>();
+                for (int i = 0; i < company.Length; i++)
+                {
+                    con.Add($"Company=@company{i}");
+                    Parameters.Add(new SqlParameter($"@company{i}", Company[i]));
+                }
+                if (con.Count > 0)
+                    cond.Add(string.Join(" OR ", con));
             }
 
             Formfactor = formfactor;
             if (Formfactor != null)
             {
-                cond.Add("Formfactor=@formfactor");
-                Parameters.Add(new SqlParameter("@formfactor", Formfactor));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Formfactor.Length; i++)
+                {
+                    con.Add($"Formfactor=@formfactor{i}");
+                    Parameters.Add(new SqlParameter($"@formfactor{i}", Formfactor[i]));
+                }
+                if (con.Count > 0)
+                    cond.Add(string.Join(" OR ", con));
             }
 
             Type = type;
             if (Type != null)
             {
-                cond.Add("Type=@type");
-                Parameters.Add(new SqlParameter("@type", Type));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Type.Length; i++)
+                {
+                    con.Add($"Type=@type{i}");
+                    Parameters.Add(new SqlParameter($"@type{i}", Type[i]));
+                }
+                if (con.Count > 0)
+                    cond.Add(string.Join(" OR ", con));
             }
 
             BuildInCharger = buildInCharger;
             if (BuildInCharger != null)
             {
-                cond.Add("[Build-inCharger]=@buildInCharger");
-                Parameters.Add(new SqlParameter("@buildInCharger", BuildInCharger));
+                List<string> con = new List<string>();
+                for (int i = 0; i < BuildInCharger.Length; i++)
+                {
+                    con.Add($"[Build-inCharger]=@buildInCharger{i}");
+                    Parameters.Add(new SqlParameter($"@buildInCharger{i}", BuildInCharger[i]));
+                }
+                if (con.Count > 0)
+                    cond.Add(string.Join(" OR ", con));
             }
 
             ChargerPower = chargerPower;
             if (ChargerPower != null)
             {
-                cond.Add("ChargerPower>=@chargerPower1 AND ChargerPower<=@chargerPower2");
-                Parameters.Add(new SqlParameter("@chargerPower1", ChargerPower.Split('-')[0]));
-                Parameters.Add(new SqlParameter("@chargerPower2", ChargerPower.Split('-')[1]));
+                List<string> con = new List<string>();
+                for (int i = 0; i < ChargerPower.Length; i++)
+                {
+                    con.Add($"ChargerPower>=@chargerPower1{i} AND ChargerPower<=@chargerPower2{i}");
+                    Parameters.Add(new SqlParameter($"@chargerPower1{i}", ChargerPower[i].Split('-')[0]));
+                    Parameters.Add(new SqlParameter($"@chargerPower2{i}", ChargerPower[i].Split('-')[1]));
+                }
+                if (con.Count > 0)
+                    cond.Add(string.Join(" OR ", con));
             }
 
             Usb3Ports = usbPorts;
             if (Usb3Ports != null)
             {
-                cond.Add("[USB3.0Amount]=@usbPorts");
-                Parameters.Add(new SqlParameter("@usbPorts", Usb3Ports));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Usb3Ports.Length; i++)
+                {
+                    con.Add($"[USB3.0Amount]=@usbPorts{i}");
+                    Parameters.Add(new SqlParameter($"@usbPorts{i}", Usb3Ports[i]));
+                }
+                if (con.Count > 0)
+                    cond.Add(string.Join(" OR ", con));
             }
 
             SelectedMotherboard = selectedMotherboard;
@@ -93,13 +129,13 @@ namespace ComputerComplectorWebAPI.Models
         public IEnumerable<Body> Filter(IEnumerable<Body> bodies, IEnumerable<Motherboard> motherboards, IEnumerable<Videocard> videocards)
         {
             return bodies.
-                Where(e => Company != null ? e.Company == Company : true).
-                Where(e => Formfactor != null ? e.Formfactor == Formfactor : true).
-                Where(e => Type != null ? e.Type == Type : true).
-                Where(e => BuildInCharger != null ? e.BuildInCharger == BuildInCharger : true).
-                Where(e => ChargerPower != null ? (e.ChargerPower >= int.Parse(ChargerPower.Split('-')[0])) : true).
-                Where(e => ChargerPower != null ? (e.ChargerPower <= int.Parse(ChargerPower.Split('-')[1])) : true).
-                Where(e => Usb3Ports != null ? e.USB3Ports == int.Parse(Usb3Ports) : true).
+                Where(e => Company != null ? Company.Contains(e.Company) : true).
+                Where(e => Formfactor != null ? Formfactor.Contains(e.Formfactor) : true).
+                Where(e => Type != null ? Type.Contains(e.Type) : true).
+                Where(e => BuildInCharger != null ? BuildInCharger.Contains(e.BuildInCharger) : true).
+                Where(e => ChargerPower != null ? ChargerPower.Select(o => e.ChargerPower >= int.Parse(o.Split('-')[0])).Contains(true) : true).
+                Where(e => ChargerPower != null ? ChargerPower.Select(o => e.ChargerPower <= int.Parse(o.Split('-')[1])).Contains(true) : true).
+                Where(e => Usb3Ports != null ? Usb3Ports.Contains(e.USB3Ports.ToString()) : true).
                 Where(e => { var m = motherboards.FirstOrDefault(i => i.ID == SelectedMotherboard); return m != null ? e.Formfactor == m.Formfactor : true; }).
                 Where(e => { var v = videocards.FirstOrDefault(i => i.ID == SelectedVideocard); return v != null ? e.VideocardMaxLength >= int.Parse(v.Length) : true; });
         }

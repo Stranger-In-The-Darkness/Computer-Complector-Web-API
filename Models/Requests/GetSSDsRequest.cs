@@ -9,71 +9,101 @@ namespace ComputerComplectorWebAPI.Models
 {
     public class GetSSDsRequest
     {
-        public string   Company     { get; set; }
-	    public string   Series      { get; set; }
-	    public string   Capacity    { get; set; }
-	    public string   Formfactor  { get; set; }
-	    public string   Interface   { get; set; }
-	    public string   CellType    { get; set; }
+        public string[]   Company     { get; set; }
+	    public string[]   Series      { get; set; }
+	    public string[]   Capacity    { get; set; }
+	    public string[]   Formfactor  { get; set; }
+	    public string[]   Interface   { get; set; }
+	    public string[]   CellType    { get; set; }
 
         public int? SelectedMotherboard { get; private set; }
 
         public string Expression { get; } = null;
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetSSDsRequest(string company, string series, string capacity, string formfactor, string @interface, 
-            string cellType, int? selectedMotherboard)
+        public GetSSDsRequest(string[] company, string[] series, string[] capacity, string[] formfactor, string[] @interface, 
+            string[] cellType, int? selectedMotherboard)
         {
             List<string> cond = new List<string>();
 
             Company = company;
             if (Company != null)
             {
-                cond.Add("Company=@company");
-                Parameters.Add(new SqlParameter("@company", Company));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Company.Length; i++)
+                {
+                    con.Add($"Company=@company{i}");
+                    Parameters.Add(new SqlParameter($"@company{i}", Company[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Series = series;
             if (Series != null)
             {
-                cond.Add("Series=@series");
-                Parameters.Add(new SqlParameter("@series", Series));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Series.Length; i++)
+                {
+                    con.Add($"Series=@series{i}");
+                    Parameters.Add(new SqlParameter($"@series{i}", Series[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Capacity = capacity;
             if (Capacity != null)
             {
-                if (Capacity.Contains('+'))
+                List<string> con = new List<string>();
+                for (int i = 0; i < Capacity.Length; i++)
                 {
-                    cond.Add("Volume>@capacity");
-                    Parameters.Add(new SqlParameter("@capacity", Capacity));
+                    if (Capacity[i].Contains('+'))
+                    {
+                        con.Add($"Volume>@capacity{i}");
+                        Parameters.Add(new SqlParameter($"@capacity{i}", Capacity[i]));
+                    }
+                    else
+                    {
+                        con.Add($"Volume=@capacity{i}");
+                        Parameters.Add(new SqlParameter($"@capacity{i}", Capacity[i]));
+                    }
                 }
-                else
-                {
-                    cond.Add("Volume=@capacity");
-                    Parameters.Add(new SqlParameter("@capacity", Capacity));
-                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Formfactor = formfactor;
             if (Formfactor != null)
             {
-                cond.Add("Formfactor=@formfactor");
-                Parameters.Add(new SqlParameter("@formfactor", Formfactor));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Formfactor.Length; i++)
+                {
+                    con.Add($"Formfactor=@formfactor{i}");
+                    Parameters.Add(new SqlParameter($"@formfactor{i}", Formfactor[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Interface = @interface;
             if (Interface != null)
             {
-                cond.Add("ID IN (SELECT DISTINCT SSDID FROM SSD_INTERFACE WHERE Interface=@interface)");
-                Parameters.Add(new SqlParameter("@interface", Interface));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Interface.Length; i++)
+                {
+                    con.Add($"ID IN (SELECT DISTINCT SSDID FROM SSD_INTERFACE WHERE Interface=@interface{i})");
+                    Parameters.Add(new SqlParameter($"@interface{i}", Interface[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             CellType = cellType;
             if (CellType != null)
             {
-                cond.Add("CellType=@cellType");
-                Parameters.Add(new SqlParameter("@cellType", CellType));
+                List<string> con = new List<string>();
+                for (int i = 0; i < CellType.Length; i++)
+                {
+                    con.Add($"CellType=@cellType{i}");
+                    Parameters.Add(new SqlParameter($"@cellType{i}", CellType[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             SelectedMotherboard = selectedMotherboard;

@@ -9,18 +9,17 @@ namespace ComputerComplectorWebAPI.Models
 {
     public class GetMotherboardsRequest
     {
-        public string   Company             { get; set; }
-        public string   Series              { get; set; }
-	    public string   Socket              { get; set; }
-	    public string   Chipset             { get; set; }
-        //public string   CPUCompany          { get; set; }
-	    public string   Formfactor          { get; set; }
-        public string   Memory              { get; set; }
-        public int?     MemorySlotsAmount   { get; set; }
-        public int?     MemoryChanelsAmount { get; set; }
-        public int?     MaxMemory           { get; set; }
-        public string   RAMMaxFreq          { get; set; }
-        public string   Slots               { get; set; }
+        public string[] Company { get; set; }
+        public string[] Series { get; set; }
+        public string[] Socket { get; set; }
+        public string[] Chipset { get; set; }
+        public string[] Formfactor { get; set; }
+        public string[] Memory { get; set; }
+        public int[] MemorySlotsAmount { get; set; }
+        public int[] MemoryChanelsAmount { get; set; }
+        public int[] MaxMemory { get; set; }
+        public string[] RAMMaxFreq { get; set; }
+        public string[] Slots { get; set; }
 
         public int? SelectedBody { get; private set; }
         public int? SelectedCharger { get; private set; }
@@ -33,8 +32,8 @@ namespace ComputerComplectorWebAPI.Models
         public string Expression { get; } = null;
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetMotherboardsRequest(string company, string series, string socket, string chipset, string formfactor, 
-            string memory, int? memorySlotsAmount, int? memoryChanelsAmount, int? maxMemory, string ramMaxFreq, string slots,
+        public GetMotherboardsRequest(string[] company, string[] series, string[] socket, string[] chipset, string[] formfactor,
+            string[] memory, int[] memorySlotsAmount, int[] memoryChanelsAmount, int[] maxMemory, string[] ramMaxFreq, string[] slots,
             int? selectedCharger, int? selectedCooler, int? selectedRam, int? selectedSsd, int? selectedBody, int? selectedHdd,
             int? selectedCpu)
         {
@@ -43,92 +42,147 @@ namespace ComputerComplectorWebAPI.Models
             Company = company;
             if (Company != null)
             {
-                cond.Add("Company=@company");
-                Parameters.Add(new SqlParameter("@company", Company));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Company.Length; i++)
+                {
+                    con.Add($"Company=@company{i}");
+                    Parameters.Add(new SqlParameter($"@company{i}", Company[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Series = series;
             if (Series != null)
             {
-                cond.Add("Series=@series");
-                Parameters.Add(new SqlParameter("@series", Series));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Series.Length; i++)
+                {
+                    con.Add($"Series=@series{i}");
+                    Parameters.Add(new SqlParameter($"@series{i}", Series[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Socket = socket;
             if (Socket != null)
             {
-                cond.Add("Socket=@socket");
-                Parameters.Add(new SqlParameter("@socket", Socket));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Socket.Length; i++)
+                {
+                    con.Add($"Socket=@socket{i}");
+                    Parameters.Add(new SqlParameter($"@socket{i}", Socket[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Chipset = chipset;
             if (Chipset != null)
             {
-                cond.Add("Chipset=@chipset");
-                Parameters.Add(new SqlParameter("@chipset", Chipset));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Chipset.Length; i++)
+                {
+                    con.Add($"Chipset=@chipset{i}");
+                    Parameters.Add(new SqlParameter($"@chipset{i}", Chipset[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Formfactor = formfactor;
             if (Formfactor != null)
             {
-                cond.Add("Formfactor=@formfactor");
-                Parameters.Add(new SqlParameter("@formfactor", Formfactor));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Formfactor.Length; i++)
+                {
+                    con.Add($"Formfactor=@formfactor{i}");
+                    Parameters.Add(new SqlParameter($"@formfactor{i}", Formfactor[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Memory = memory;
             if (Memory != null)
             {
-                cond.Add("MemoryType=@memory");
-                Parameters.Add(new SqlParameter("@memory", Memory));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Memory.Length; i++)
+                {
+                    con.Add($"MemoryType=@memory{i}");
+                    Parameters.Add(new SqlParameter($"@memory{i}", Memory[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             MemorySlotsAmount = memorySlotsAmount;
             if (MemorySlotsAmount != null)
             {
-                cond.Add("AmountOfMemorySlots=@memorySlotsAmount");
-                Parameters.Add(new SqlParameter("@memorySlotsAmount", MemorySlotsAmount));
+                List<string> con = new List<string>();
+                for (int i = 0; i < MemorySlotsAmount.Length; i++)
+                {
+                    con.Add($"AmountOfMemorySlots=@memorySlotsAmount{i}");
+                    Parameters.Add(new SqlParameter($"@memorySlotsAmount{i}", MemorySlotsAmount[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             MemoryChanelsAmount = memoryChanelsAmount;
             if (MemoryChanelsAmount != null)
             {
-                cond.Add("AmountOfMemoryChanels=@memoryChanelsAmount");
-                Parameters.Add(new SqlParameter("@memoryChanelsAmount", MemoryChanelsAmount));
+                List<string> con = new List<string>();
+                for (int i = 0; i < MemoryChanelsAmount.Length; i++)
+                {
+                    con.Add($"AmountOfMemoryChanels=@memoryChanelsAmount{i}");
+                    Parameters.Add(new SqlParameter($"@memoryChanelsAmount{i}", MemoryChanelsAmount[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             MaxMemory = maxMemory;
             if (MaxMemory != null)
             {
-                cond.Add("MaximumMemory=@maxMemory");
-                Parameters.Add(new SqlParameter("@maxMemory", MaxMemory));
+                List<string> con = new List<string>();
+                for (int i = 0; i < MaxMemory.Length; i++)
+                {
+                    con.Add($"MaximumMemory=@maxMemory{i}");
+                    Parameters.Add(new SqlParameter($"@maxMemory{i}", MaxMemory[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             RAMMaxFreq = ramMaxFreq;
             if (RAMMaxFreq != null)
             {
-                if (RAMMaxFreq.Contains('<'))
+                List<string> con = new List<string>();
+                for (int i = 0; i < RAMMaxFreq.Length; i++)
                 {
-                    cond.Add("MaximumRAMFrequency<@ramMaxFreq");
-                    Parameters.Add(new SqlParameter("@ramMaxFreq", RAMMaxFreq.Replace("<", "")));
+                    if (RAMMaxFreq[i].Contains('<'))
+                    {
+                        con.Add($"MaximumRAMFrequency<@ramMaxFreq{i}");
+                        Parameters.Add(new SqlParameter($"@ramMaxFreq{i}", RAMMaxFreq[i].Replace("<", "")));
+                    }
+                    else if (RAMMaxFreq[i].Contains('-'))
+                    {
+                        con.Add($"MaximumRAMFrequency>=@ramMaxFreq1{i} AND MaximumRAMFrequency<=@ramMaxFreq2{i}");
+                        Parameters.Add(new SqlParameter($"@ramMaxFreq1{i}", RAMMaxFreq[i].Split('-')[0]));
+                        Parameters.Add(new SqlParameter($"@ramMaxFreq2{i}", RAMMaxFreq[i].Split('-')[1]));
+                    }
+                    else if (RAMMaxFreq[i].Contains('>'))
+                    {
+                        con.Add($"MaximumRAMFrequency>@ramMaxFreq{i}");
+                        Parameters.Add(new SqlParameter($"@ramMaxFreq{i}", RAMMaxFreq[i].Replace(">", "")));
+                    }
                 }
-                else if (RAMMaxFreq.Contains('-'))
-                {
-                    cond.Add("MaximumRAMFrequency>=@ramMaxFreq1 AND MaximumRAMFrequency<=@ramMaxFreq1");
-                    Parameters.Add(new SqlParameter("@ramMaxFreq1", RAMMaxFreq.Split('-')[0]));
-                    Parameters.Add(new SqlParameter("@ramMaxFreq2", RAMMaxFreq.Split('-')[1]));
-                }
-                else if (RAMMaxFreq.Contains('>'))
-                {
-                    cond.Add("MaximumRAMFrequency>@ramMaxFreq");
-                    Parameters.Add(new SqlParameter("@ramMaxFreq", RAMMaxFreq.Replace(">","")));
-                }                
+                cond.Add(string.Join(" OR ", con));
             }
 
             Slots = slots;
             if (Slots != null)
             {
-                cond.Add("ID IN (SELECT DISTINCT MotherboardID FROM MOTHERBOARD_SLOTS WHERE Slot = @slots)");
-                Parameters.Add(new SqlParameter("@slots", Slots));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Slots.Length; i++)
+                {
+                    con.Add($"ID IN (SELECT DISTINCT MotherboardID FROM MOTHERBOARD_SLOTS WHERE Slot = @slots{i})");
+                    Parameters.Add(new SqlParameter($"@slots{i}", Slots[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             SelectedCharger = selectedCharger;

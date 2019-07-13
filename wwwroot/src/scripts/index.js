@@ -76,13 +76,18 @@ const tab = {
 
 const option = {
     selected: {},
-    change: function (sender, index) {
-        if (index >= 0) {
-            var option = sender.children[index].value;
-            option.selected[sender.name] = option;
+    change: function (property, value) {
+        if (option.selected[property]) {
+            if (option.selected[property].includes(value)) {
+                option.selected[property] = option.selected[property].filter(e => e !== value);
+            }
+            else {
+                option.selected[property].push(value);
+            }
         }
         else {
-            console.error("Invalid option index");
+            option.selected[property] = [];
+            option.selected[property].push(value);
         }
     }
 };
@@ -114,6 +119,7 @@ const element = {
             switch (data[0]) {
                 case "body":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.body = element.all.body[data[1]]; console.log(element.all.body[data[1]]);
                         $("#selectedBody").empty();
                         $("#selectedBody").append(element.format(element.selected.body, data[0]));
@@ -121,6 +127,7 @@ const element = {
                     } break;
                 case "charger":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.charger = element.all.charger[data[1]]; console.log(element.all.charger[data[1]]);
                         $("#selectedCharger").empty();
                         $("#selectedCharger").append(element.format(element.selected.charger, data[0]));
@@ -128,6 +135,7 @@ const element = {
                     } break;
                 case "cooler":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.cooler = element.all.cooler[data[1]]; console.log(element.all.cooler[data[1]]);
                         $("#selectedCooler").empty();
                         $("#selectedCooler").append(element.format(element.selected.cooler, data[0]));
@@ -135,6 +143,7 @@ const element = {
                     } break;
                 case "cpu":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.cpu = element.all.cpu[data[1]]; console.log(element.all.cpu[data[1]]);
                         $("#selectedCpu").empty();
                         $("#selectedCpu").append(element.format(element.selected.cpu, data[0]));
@@ -142,6 +151,7 @@ const element = {
                     } break;
                 case "hdd":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.hdd = element.all.hdd[data[1]]; console.log(element.all.hdd[data[1]]);
                         $("#selectedHdd").empty();
                         $("#selectedHdd").append(element.format(element.selected.hdd, data[0]));
@@ -149,6 +159,7 @@ const element = {
                     } break;
                 case "motherboard":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.motherboard = element.all.motherboard[data[1]]; console.log(element.all.motherboard[data[1]]);
                         $("#selectedMotherboard").empty();
                         $("#selectedMotherboard").append(element.format(element.selected.motherboard, data[0]));
@@ -156,6 +167,7 @@ const element = {
                     } break;
                 case "ram":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.ram = element.all.ram[data[1]]; console.log(element.all.ram[data[1]]);
                         $("#selectedRam").empty();
                         $("#selectedRam").append(element.format(element.selected.ram, data[0]));
@@ -163,6 +175,7 @@ const element = {
                     } break;
                 case "ssd":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.ssd = element.all.ssd[data[1]]; console.log(element.all.ssd[data[1]]);
                         $("#selectedSsd").empty();
                         $("#selectedSsd").append(element.format(element.selected.ssd, data[0]));
@@ -170,14 +183,32 @@ const element = {
                     } break;
                 case "videocard":
                     {
+                        $(".selection-list").removeClass("inactive");
                         element.selected.videocard = element.all.videocard[data[1]]; console.log(element.all.videocard[data[1]]);
                         $("#selectedVideocard").empty();
                         $("#selectedVideocard").append(element.format(element.selected.videocard, data[0]));
                         $("#selectedVideocard").removeClass("inactive");
                     } break;
             }
+            $('.element-select-btn').click(
+                function () {
+                    var id = $(this).attr('id');
+                    if ($(this).hasClass("remove-btn")) {
+                        element.selected.remove(id);
+                        $(this).parent().removeClass('selected');
+                        $(this).removeClass("remove-btn");
+                        $(this).val("+");
+                    }
+                    else {
+                        element.selected.add(id);
+                        $(this).parent().addClass('selected');
+                        $(this).addClass("remove-btn");
+                        $(this).val("X");
+                    }
+                });
         },
         remove: function (value) {
+            console.log(value);
             var data = value.split("_");
             switch (data[0]) {
                 case "body":
@@ -235,11 +266,26 @@ const element = {
                         $("#selectedVideocard").addClass("inactive");
                     } break;
             }
+            if (element.selected.body === null &&
+                element.selected.charger === null &&
+                element.selected.cooler === null &&
+                element.selected.cpu === null &&
+                element.selected.hdd === null &&
+                element.selected.motherboard === null &&
+                element.selected.ram === null &&
+                element.selected.ssd === null &&
+                element.selected.videocard === null)
+            {
+                $(".element").removeClass("selected");
+                $(".selection-list").addClass("inactive");
+                $(".element-select-btn.remove-btn").val("+");
+                $(".element-select-btn.remove-btn").removeClass("remove-btn");
+            }
         }
     },
     get: function (type) {
-        if (type !== null && type != "undefined") {
-            if (typeof (type) === "string") {
+        if (type && type !== null) {
+            if (typeof type === "string") {
                 switch (type) {
                     case "body":
                     case "charger":
@@ -254,7 +300,7 @@ const element = {
                             var url = `api/components/${type}?`;
                             var q = [];
                             $.each(option.selected, (index, value) => {
-                                if (index != "change") {
+                                if (index !== "change") {
                                     q.push(`${index}=${value}`);
                                 }
                             });
@@ -309,43 +355,53 @@ const element = {
         }
     },
     format: function (value, type) {
-        console.log(value);
-        console.log(`Type = ${type}`);
         var inner = "";
         if (element.selected[type] !== null && value.id === element.selected[type].id) {
-            inner = "<li class='element selected'><table class='elementInfo' cellspacing='0' cellpadding='0'>";
+            inner = "<div class='element selected'><table class='element-info' cellspacing='0' cellpadding='0'>";
         }
         else {
-            inner = "<li class='element'><table class='elementInfo' cellspacing='0' cellpadding='0'>";
+            inner = "<div class='element'><table class='element-info' cellspacing='0' cellpadding='0'>";
         }
         $.each(value, (index, value) => {
             switch (index) {
                 case "id": break;
                 case "title":
                     {
-                        inner += `<th colspan="2"><div class="elementHeader">${value}</div><hr/></th>`;
+                        inner += `<th colspan="2"><div class="element-header">${value}</div><hr/></th>`;
                     }
                     break;
                 default: {
-                    inner += `<tr><td class="elementProperty">${properties[index.toLowerCase()]}</td><td class="elementProperty">${value}</td>`;
+                    inner += `<tr><td class="element-property">${properties[index.toLowerCase()]}</td><td class="element-property">${value}</td>`;
                 }
                     break;
             }
         });
         if (element.selected[type] !== null && value.id === element.selected[type].id) {
-            inner += `</table><input type="button" class="element-select-btn remove-btn" id="${type}_${value.id}" value="X" /></li>`;
+            inner += `</table><input type="button" class="element-select-btn remove-btn" id="${type}_${value.id}" value="X" /></div>`;
         }
         else {
-            inner += `</table><input type="button" class="element-select-btn" id="${type}_${value.id}" value="+" /></li>`;
+            inner += `</table><input type="button" class="element-select-btn" id="${type}_${value.id}" value="+" /></div>`;
         }
         return inner;
     }
 };
 
 const property = {
-    get: function (type) {
-        if (type !== null && type != "undefined") {
-            if (typeof (type) === "string") {
+    data: {},
+    format: function (type) {
+        $("#filtersList").empty();
+        $.each(property.data[type], (index, value) => {
+            var inner = `<li><div class="filter"><div class="filter-header">${value.text}</div><hr/><div class="filter-options">`;
+            $.each(value.values, (i, value) => {
+                inner += `<input class="filter" type="checkbox" onchange="option.change('${index.toString()}', '${value}')">${value}</br>`;
+            });
+            inner += "</div></div></li>";
+            $("#filtersList").append(inner);
+        });
+    },
+    get: function (type, lang) {
+        if (type && type !== null) {
+            if (typeof type === "string") {
                 var url = "api/components/";
                 switch (type) {
                     case "body":
@@ -358,24 +414,24 @@ const property = {
                     case "ssd":
                     case "videocard":
                         {
-                            $.ajax({
-                                url: `${url}/${type}/properties`,
-                                type: "GET",
-                                success: function (res) {
-                                    $("#filtersList").empty();
-                                    $.each(res, (index, value) => {
-                                        var inner = `<li><div class="filter"><div class="filterHeader">${index}</div><select size="1" name=${index.toLowerCase().split(" ").join("-")} class="filterOptions" onchange="selection.options.change(this, this.selectedIndex)">`;
-                                        $.each(value.item3, (index, value) => {
-                                            inner += `<option>${value}</option>`;
-                                        });
-                                        inner += "</select></div></li>";
-                                        $("#filtersList").append(inner);
+                            switch (lang) {
+                                case "en-en":
+                                default: {
+                                    $.ajax({
+                                        dataType: "json",
+                                        url: `localization/en-en/${type}-properties.json`,
+                                        mimeType: "application/json",
+                                        success: function (data) {
+                                            property.data[type] = data;
+                                            property.format(type);
+                                        },
+                                        error: function (error) {
+                                            console.log(error);
+                                        }
                                     });
-                                },
-                                error: function (err) {
-                                    console.log(err);
                                 }
-                            });
+                                    break;
+                            }
                             break;
                         }
                 }

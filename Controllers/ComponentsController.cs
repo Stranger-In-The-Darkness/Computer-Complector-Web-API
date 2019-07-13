@@ -9,6 +9,7 @@ using ComputerComplectorWebAPI.Interfaces;
 using ComputerComplectorWebAPI.Models;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 
 namespace ComputerComplectorWebAPI.Controllers
 {
@@ -20,21 +21,23 @@ namespace ComputerComplectorWebAPI.Controllers
     public class ComponentsController : Controller
     {
         private IComponentsServiceAsync _componentService;
+        private IStringLocalizer<ComponentsController> _localizer;
 
-        public ComponentsController(IComponentsServiceAsync componentService)
+        public ComponentsController(IComponentsServiceAsync componentService, IStringLocalizer<ComponentsController> localizer)
         {
             _componentService = componentService;
+            _localizer = localizer;
         }
 
         #region Properties
         /// <summary>
         /// 
         /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
+        /// <returns>JSON on keyword and it description</returns>
         [HttpGet, Route("body/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetBodyProperties()
+        public async Task<string> GetBodyProperties()
         {
-            return await _componentService.GetParameters("body");
+            return await Task.Run(() => { return _localizer["body"].Value; });
         }
 
         /// <summary>
@@ -42,9 +45,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("charger/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetChargerProperties()
+        public async Task<string> GetChargerProperties()
         {
-            return await _componentService.GetParameters("charger");
+            return await Task.Run(() => { return _localizer["charger"].Value; });
         }
 
         /// <summary>
@@ -52,9 +55,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("cooler/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetCoolerProperties()
+        public async Task<string> GetCoolerProperties()
         {
-            return await _componentService.GetParameters("cooler");
+            return await Task.Run(() => { return _localizer["cooler"].Value; });
         }
 
         /// <summary>
@@ -62,9 +65,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("cpu/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetCPUProperties()
+        public async Task<string> GetCPUProperties()
         {
-            return await _componentService.GetParameters("cpu");
+            return await Task.Run(() => { return _localizer["cpu"].Value; });
         }
 
         /// <summary>
@@ -72,9 +75,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("hdd/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetHDDProperties()
+        public async Task<string> GetHDDProperties()
         {
-            return await _componentService.GetParameters("hdd");
+            return await Task.Run(() => { return _localizer["hdd"].Value; });
         }
 
         /// <summary>
@@ -82,9 +85,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("motherboard/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetMotherboardProperties()
+        public async Task<string> GetMotherboardProperties()
         {
-            return await _componentService.GetParameters("motherboard");
+            return await Task.Run(() => { return _localizer["motherboard"].Value; });
         }
 
         /// <summary>
@@ -92,9 +95,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("ram/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetRAMProperties()
+        public async Task<string> GetRAMProperties()
         {
-            return await _componentService.GetParameters("ram");
+            return await Task.Run(() => { return _localizer["ram"].Value; });
         }
 
         /// <summary>
@@ -102,9 +105,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("ssd/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetSSDProperties()
+        public async Task<string> GetSSDProperties()
         {
-            return await _componentService.GetParameters("ssd");
+            return await Task.Run(() => { return _localizer["ssd"].Value; });
         }
 
         /// <summary>
@@ -112,9 +115,9 @@ namespace ComputerComplectorWebAPI.Controllers
         /// </summary>
         /// <returns>Dictionary of properties? their description and options</returns>
         [HttpGet, Route("videocard/properties")]
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetVideocardProperties()
+        public async Task<string> GetVideocardProperties()
         {
-            return await _componentService.GetParameters("videocard");
+            return await Task.Run(() => { return _localizer["videocard"].Value; });
         }
         #endregion
 
@@ -145,13 +148,13 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/body
         [HttpGet, Route("body")]
         public async Task<IEnumerable<Body>> GetBodies(
-            [FromQuery(Name = "company")] string company,
-            [FromQuery(Name = "formfactor")] string formfactor,
-            [FromQuery(Name = "type")] string type,
-            [FromQuery(Name = "build-in-charger")] bool? buildInCharger,
-            [FromQuery(Name = "charger-power")] string chargerPower,
-            [FromQuery(Name = "color")] string color,
-            [FromQuery(Name = "usb-3.0-amount")] string usbPorts,
+            [FromQuery(Name = "company")] string[] company,
+            [FromQuery(Name = "formfactor")] string[] formfactor,
+            [FromQuery(Name = "type")] string[] type,
+            [FromQuery(Name = "build-in-charger")] bool[] buildInCharger,
+            [FromQuery(Name = "charger-power")] string[] chargerPower,
+            [FromQuery(Name = "color")] string[] color,
+            [FromQuery(Name = "usb-3.0-amount")] string[] usbPorts,
             [FromQuery(Name = "selected-motherboard")]int? selectedMotherboard,
             [FromQuery(Name = "selected-videocard")]int? selectedVideocard)
         {
@@ -188,15 +191,15 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/charger
         [HttpGet, Route("charger")]
         public async Task<IEnumerable<Charger>> GetChargers(
-            [FromQuery(Name = "company")] string company,
-            [FromQuery(Name = "series")] string series,
-            [FromQuery(Name = "power")] string power, 
-            [FromQuery(Name = "sertificate")] string sertificate, 
-            [FromQuery(Name = "video-connectors-amount")] int? videoConnectorsCount,
-            [FromQuery(Name = "connector-type")] string connectorType,
-            [FromQuery(Name = "sata-amount")] string sataCount,
-            [FromQuery(Name = "ide-amount")] string ideCount,
-            [FromQuery(Name = "motherboard-connector")] string motherboardConnector,
+            [FromQuery(Name = "company")] string[] company,
+            [FromQuery(Name = "series")] string[] series,
+            [FromQuery(Name = "power")] string[] power, 
+            [FromQuery(Name = "sertificate")] string[] sertificate, 
+            [FromQuery(Name = "video-connectors-amount")] int[] videoConnectorsCount,
+            [FromQuery(Name = "connector-type")] string[] connectorType,
+            [FromQuery(Name = "sata-amount")] string[] sataCount,
+            [FromQuery(Name = "ide-amount")] string[] ideCount,
+            [FromQuery(Name = "motherboard-connector")] string[] motherboardConnector,
             [FromQuery(Name = "selected-motherboard")]int? selectedMotherboard,
             [FromQuery(Name = "selected-videocard")]int? selectedVideocard)
         {
@@ -232,14 +235,14 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/cooler
         [HttpGet, Route("cooler")]
         public async Task<IEnumerable<Cooler>> GetCoolers(
-            [FromQuery(Name = "company")]string company,
-            [FromQuery(Name = "purpose")]string purpose,
-            [FromQuery(Name = "type")]string type,
-            [FromQuery(Name = "socket")]string socket,
-            [FromQuery(Name = "material")]string material,
-            [FromQuery(Name = "diameter")]string diameter,
-            [FromQuery(Name = "connector")]string connector,
-            [FromQuery(Name = "adjustement")]string adjustement,
+            [FromQuery(Name = "company")]string[] company,
+            [FromQuery(Name = "purpose")]string[] purpose,
+            [FromQuery(Name = "type")]string[] type,
+            [FromQuery(Name = "socket")]string[] socket,
+            [FromQuery(Name = "material")]string[] material,
+            [FromQuery(Name = "diameter")]string[] diameter,
+            [FromQuery(Name = "connector")]string[] connector,
+            [FromQuery(Name = "adjustement")]string[] adjustement,
             [FromQuery(Name = "selected-cpu")]int? selectedCpu,
             [FromQuery(Name = "selected-motherboard")]int? selectedMotherboard)
         {
@@ -275,15 +278,15 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/cpu
         [HttpGet, Route("cpu")]
         public async Task<IEnumerable<CPU>> GetCPUs(
-            [FromQuery(Name = "company")]string company,
-            [FromQuery(Name = "series")]string series,
-            [FromQuery(Name = "socket")]string socket,
-            [FromQuery(Name = "amount-of-cores")]int? amountOfCores,
-            [FromQuery(Name = "amount-of-threads")]int? amountOfThreads,
-            [FromQuery(Name = "integrated-graphics")]bool? integratedGraphics,
-            [FromQuery(Name = "core")]string core,
-            [FromQuery(Name = "delivery-type")]string deliveryType,
-            [FromQuery(Name = "overclocking")]bool? overclocking,
+            [FromQuery(Name = "company")]string[] company,
+            [FromQuery(Name = "series")]string[] series,
+            [FromQuery(Name = "socket")]string[] socket,
+            [FromQuery(Name = "amount-of-cores")]int[] amountOfCores,
+            [FromQuery(Name = "amount-of-threads")]int[] amountOfThreads,
+            [FromQuery(Name = "integrated-graphics")]bool[] integratedGraphics,
+            [FromQuery(Name = "core")]string[] core,
+            [FromQuery(Name = "delivery-type")]string[] deliveryType,
+            [FromQuery(Name = "overclocking")]bool[] overclocking,
             [FromQuery(Name = "selected-cooler")]int? selectedCooler,
             [FromQuery(Name = "selected-motherboard")]int? selectedMotherboard)
         {
@@ -317,13 +320,13 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/hdd
         [HttpGet, Route("hdd")]
         public async Task<IEnumerable<HDD>> GetHDDs(
-            [FromQuery(Name = "company")] string company,
-            [FromQuery(Name = "formfactor")] string formfactor,
-            [FromQuery(Name = "volume")] string volume,
-            [FromQuery(Name = "interface")] string @interface,
-            [FromQuery(Name = "buffer-volume")] int? bufferVolume,
-            [FromQuery(Name = "speed")] int? speed,
-            [FromQuery(Name = "series")] string series,
+            [FromQuery(Name = "company")] string[] company,
+            [FromQuery(Name = "formfactor")] string[] formfactor,
+            [FromQuery(Name = "volume")] string[] volume,
+            [FromQuery(Name = "interface")] string[] @interface,
+            [FromQuery(Name = "buffer-volume")] int[] bufferVolume,
+            [FromQuery(Name = "speed")] int[] speed,
+            [FromQuery(Name = "series")] string[] series,
             [FromQuery(Name = "selected-motherboard")]int? selectedMotherboard)
         {
             return await _componentService.GetHDDs(new GetHDDsRequest(company, formfactor, volume, @interface, bufferVolume, speed, 
@@ -366,17 +369,17 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/motherboard
         [HttpGet, Route("motherboard")]
         public async Task<IEnumerable<Motherboard>> GetMotherboards(
-            [FromQuery(Name = "company")] string company,
-            [FromQuery(Name = "socket")] string socket,
-            [FromQuery(Name = "chipset")] string chipset,
-            [FromQuery(Name = "formfactor")] string formfactor,
-            [FromQuery(Name = "memory")] string memory,
-            [FromQuery(Name = "amount-of-memory-slots")] int? memorySlots,
-            [FromQuery(Name = "amount-of-memory-chanels")] int? memoryChanels,
-            [FromQuery(Name = "maximum-memory")] int? maxMemory,
-            [FromQuery(Name = "maximum-ram-frequency")] string maxRamFreq,
-            [FromQuery(Name = "slots")] string slots,
-            [FromQuery(Name = "series")] string series,
+            [FromQuery(Name = "company")] string[] company,
+            [FromQuery(Name = "socket")] string[] socket,
+            [FromQuery(Name = "chipset")] string[] chipset,
+            [FromQuery(Name = "formfactor")] string[] formfactor,
+            [FromQuery(Name = "memory")] string[] memory,
+            [FromQuery(Name = "amount-of-memory-slots")] int[] memorySlots,
+            [FromQuery(Name = "amount-of-memory-chanels")] int[] memoryChanels,
+            [FromQuery(Name = "maximum-memory")] int[] maxMemory,
+            [FromQuery(Name = "maximum-ram-frequency")] string[] maxRamFreq,
+            [FromQuery(Name = "slots")] string[] slots,
+            [FromQuery(Name = "series")] string[] series,
             [FromQuery(Name = "selected-body")]int? selectedBody,
             [FromQuery(Name = "selected-charger")]int? selectedCharger,
             [FromQuery(Name = "selected-cooler")]int? selectedCooler,
@@ -417,14 +420,14 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/ram
         [HttpGet, Route("ram")]
         public async Task<IEnumerable<RAM>> GetRAMs(
-            [FromQuery(Name="company")]string company,
-            [FromQuery(Name="frequency")]int? frequency,
-            [FromQuery(Name="memory-type")]string memoryType,
-            [FromQuery(Name="purpose")]string purpose,
-            [FromQuery(Name="memory-volume")]int? memoryVolume,
-            [FromQuery(Name="modules-amount")]int? modulesAmount,
-            [FromQuery(Name="series")]string series,
-            [FromQuery(Name="cas-latency")]string cl,
+            [FromQuery(Name="company")]string[] company,
+            [FromQuery(Name="frequency")]int[] frequency,
+            [FromQuery(Name="memory-type")]string[] memoryType,
+            [FromQuery(Name="purpose")]string[] purpose,
+            [FromQuery(Name="memory-volume")]int[] memoryVolume,
+            [FromQuery(Name="modules-amount")]int[] modulesAmount,
+            [FromQuery(Name="series")]string[] series,
+            [FromQuery(Name="cas-latency")]string[] cl,
             [FromQuery(Name="selected-motherboard")]int? selectedMotherboard)
         {
             return await _componentService.GetRAMs(new GetRAMsRequest(company, series, memoryType, purpose, memoryVolume, 
@@ -456,12 +459,12 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/ssd
         [HttpGet, Route("ssd")]
         public async Task<IEnumerable<SSD>> GetSSDs(
-            [FromQuery(Name = "volume")] string volume,
-            [FromQuery(Name = "company")] string company,
-            [FromQuery(Name = "formfactor")] string formfactor,
-            [FromQuery(Name = "interface")] string @interface,
-            [FromQuery(Name = "cell-type")] string cellType,
-            [FromQuery(Name = "series")] string series,
+            [FromQuery(Name = "volume")] string[] volume,
+            [FromQuery(Name = "company")] string[] company,
+            [FromQuery(Name = "formfactor")] string[] formfactor,
+            [FromQuery(Name = "interface")] string[] @interface,
+            [FromQuery(Name = "cell-type")] string[] cellType,
+            [FromQuery(Name = "series")] string[] series,
             [FromQuery(Name = "selected-motherboard")]int? selectedMotherboard)
         {
             return await _componentService.GetSSDs(new GetSSDsRequest(company, series, volume, formfactor, @interface, cellType,
@@ -495,13 +498,13 @@ namespace ComputerComplectorWebAPI.Controllers
         // GET api/components/videocard
         [HttpGet, Route("videocard")]
         public async Task<IEnumerable<Videocard>> GetVideocards(
-            [FromQuery(Name = "graphical-proccessor")]string gpu,
-            [FromQuery(Name = "company")]string company,
-            [FromQuery(Name = "capacity")]int? capacity,
-            [FromQuery(Name = "vram")]string vram,
-            [FromQuery(Name = "connectors")]string connectors,
-            [FromQuery(Name = "series")]string series,
-            [FromQuery(Name = "family")]string family,
+            [FromQuery(Name = "graphical-proccessor")]string[] gpu,
+            [FromQuery(Name = "company")]string[] company,
+            [FromQuery(Name = "capacity")]int[] capacity,
+            [FromQuery(Name = "vram")]string[] vram,
+            [FromQuery(Name = "connectors")]string[] connectors,
+            [FromQuery(Name = "series")]string[] series,
+            [FromQuery(Name = "family")]string[] family,
             [FromQuery(Name = "selected-body")]int? selectedBody,
             [FromQuery(Name = "selected-charger")]int? selectedCharger)
         {

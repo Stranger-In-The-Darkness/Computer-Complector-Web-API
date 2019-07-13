@@ -5,6 +5,10 @@
     <title></title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="src/styles/index.css" rel="stylesheet" type="text/css" />
+    <link href="src/styles/filter.css" rel="stylesheet" type="text/css" />
+    <link href="src/styles/element.css" rel="stylesheet" type="text/css" />
+    <link href="src/styles/part.css" rel="stylesheet" type="text/css" />
+    <link href="src/styles/selection.css" rel="stylesheet" type="text/css" />
     <viewport />
 </head>
 <body onresize="$('.elements').height($(window).height() - $('.parts').height());">
@@ -12,68 +16,68 @@
         <!--<div class="mainHeader"></div>-->
         <div class="parts" id="partsTab">
             <div class="part">
-                <button class="partBtn selected-part" onclick="tab.change('body'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/BODY.png" class="partImg"/>
-                    <div class="partName">Body</div>
+                <button class="part-btn selected-part" onclick="tab.change('body'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/BODY.png" class="part-img"/>
+                    <div class="part-name">Body</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('charger'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/CHARGER.png" class="partImg" />
-                    <div class="partName">Charger</div>
+                <button class="part-btn" onclick="tab.change('charger'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/CHARGER.png" class="part-img" />
+                    <div class="part-name">Charger</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('cooler'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/COOLER.png" class="partImg" />
-                    <div class="partName">Cooler</div>
+                <button class="part-btn" onclick="tab.change('cooler'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/COOLER.png" class="part-img" />
+                    <div class="part-name">Cooler</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('cpu'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/CPU.png" class="partImg" />
-                    <div class="partName">CPU</div>
+                <button class="part-btn" onclick="tab.change('cpu'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/CPU.png" class="part-img" />
+                    <div class="part-name">CPU</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('hdd'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/HDD.png" class="partImg" />
-                    <div class="partName">HDD</div>
+                <button class="part-btn" onclick="tab.change('hdd'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/HDD.png" class="part-img" />
+                    <div class="part-name">HDD</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('motherboard'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/MOTHERBOARD.png" class="partImg" />
-                    <div class="partName">Motherboard</div>
+                <button class="part-btn" onclick="tab.change('motherboard'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/MOTHERBOARD.png" class="part-img" />
+                    <div class="part-name">Motherboard</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('ram'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/RAM.png" class="partImg" />
-                    <div class="partName">RAM</div>
+                <button class="part-btn" onclick="tab.change('ram'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/RAM.png" class="part-img" />
+                    <div class="part-name">RAM</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('ssd'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/SSD.png" class="partImg" />
-                    <div class="partName">SSD</div>
+                <button class="part-btn" onclick="tab.change('ssd'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/SSD.png" class="part-img" />
+                    <div class="part-name">SSD</div>
                 </button>
             </div>
             <div class="part">
-                <button class="partBtn" onclick="tab.change('videocard'); $('.partBtn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/VIDEOCARD.png" class="partImg" />
-                    <div class="partName">Videocard</div>
+                <button class="part-btn" onclick="tab.change('videocard'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
+                    <img src="src/img/VIDEOCARD.png" class="part-img" />
+                    <div class="part-name">Videocard</div>
                 </button>
             </div>
         </div>
-        <div class="elements">
+        <div class="main-inner">
             <div class="filters-list">
                 <ul id="filtersList"></ul>
             </div>
             <div class="elements-list">
                 <ul id="elementsList"></ul>
             </div>
-            <div class="selection-list">
+            <div class="selection-list inactive">
                 <ul id="selectedList">
                     <li class="selected-item inactive" id="selectedBody"></li>
                     <li class="selected-item inactive" id="selectedCharger"></li>

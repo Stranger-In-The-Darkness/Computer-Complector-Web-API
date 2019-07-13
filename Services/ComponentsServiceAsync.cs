@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.IO;
 
 using Microsoft.Extensions.Caching.Memory;
 
@@ -860,7 +861,7 @@ namespace ComputerComplectorWebAPI.Services
 
             List<CPU> cpus;
 
-            if (_cache.TryGetValue((expression, request.Parameters), out cpus))
+            if (!_cache.TryGetValue((expression, request.Parameters), out cpus))
             {
                 cpus = new List<CPU>();
 
@@ -889,10 +890,13 @@ namespace ComputerComplectorWebAPI.Services
 
                 reader.Close();
 
-                _cache.Set(
-                    (expression, request.Parameters),
-                    cpus,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+                if (cpus != null)
+                {
+                    _cache.Set(
+                        (expression, request.Parameters),
+                        cpus,
+                        new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+                }
             }
 
             return cpus;
@@ -1469,69 +1473,29 @@ namespace ComputerComplectorWebAPI.Services
             return videocards;
         }
 
-        /// <summary>
-        /// Get all filters for specific component
-        /// </summary>
-        /// <param name="component">Unique component</param>
-        /// <returns></returns>
-        public async Task<Dictionary<string, (bool, string, List<string>)>> GetParameters(string component)
+        public async Task<string> GetParameters(string component, string language = "en-en")
         {
-            string expression = "SELECT * FROM FIELDS";
-
-            string properties = "SELECT Value FROM PROPERTIES";
-
-            switch (component.ToLower())
+            try
             {
-                case "body":
-                case "charger":
-                case "cooler":
-                case "cpu":
-                case "hdd":
-                case "motherboard":
-                case "ram":
-                case "ssd":
-                case "videocard":
+                if (language == "")
+                    language = "en-en";
+                using (StreamReader reader = new StreamReader(File.OpenRead(AppDomain.CurrentDomain.BaseDirectory + $"wwwroot/localization/{language}/{component}-properties.json")))
                 {
-                    expression = $"{expression} WHERE Component like '%{component.ToLower()}%'";
-
-                    Dictionary<string, (bool, string, List<string>)> fields;
-
-                    if (!_cache.TryGetValue(expression, out fields))
-                    {
-                        fields = new Dictionary<string, (bool Addition, string Text, List<string> Values)>();
-                        using (SqlDataReader reader = await _utility.Execute(expression))
-                        {
-                            while (reader.Read())
-                            {
-                                string key = reader["Field"].ToString().Trim();
-                                bool addition = (bool)reader["Addition"];
-                                string additionText = reader["AdditionText"].ToString().Trim();
-                                fields.Add(key, (addition, additionText, new List<string>()));
-                            }
-                        }
-
-                        for (int i = 0; i < fields.Count; i++)
-                        {
-                            var prop = $"{properties} WHERE ID = '{component.ToLower()}_{fields.ElementAt(i).Key}'";
-
-                            using (SqlDataReader reader = await _utility.Execute(prop))
-                            {
-                                while (reader.Read())
-                                {
-                                    fields.ElementAt(i).Value.Item3.Add(reader["Value"].ToString().Trim());
-                                }
-                            }
-                        }
-
-                        _cache.Set(
-                            expression,
-                            fields,
-                            new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(24)));
-                    }
-                    return fields;
+                    string res = await reader.ReadToEndAsync();
+                    return res;
                 }
-                default:
-                return null;
+            }
+            catch(FileNotFoundException e)
+            {
+                throw e;
+            }
+            catch (FileLoadException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
     }

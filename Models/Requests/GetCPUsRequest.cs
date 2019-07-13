@@ -9,16 +9,15 @@ namespace ComputerComplectorWebAPI.Models
 {
     public class GetCPUsRequest
     {
-        public string  Company             { get; set; }
-        public string  Series              { get; set; }
-        public string  Socket              { get; set; }
-        //public string  Frequency           { get; set; }
-        public int?    CoresAmount         { get; set; }
-        public int?    ThreadsAmount       { get; set; }
-        public bool?   IntegratedGraphics  { get; set; }
-        public string  Core                { get; set; }
-        public string  DeliveryType        { get; set; }
-        public bool?   Overcloacking       { get; set; }
+        public string[]  Company             { get; set; }
+        public string[]  Series              { get; set; }
+        public string[]  Socket              { get; set; }
+        public int[]     CoresAmount         { get; set; }
+        public int[]     ThreadsAmount       { get; set; }
+        public bool[]    IntegratedGraphics  { get; set; }
+        public string[]  Core                { get; set; }
+        public string[]  DeliveryType        { get; set; }
+        public bool[]    Overcloacking       { get; set; }
 
         public int? SelectedCooler { get; private set; }
         public int? SelectedMotherboard { get; private set; }
@@ -26,8 +25,8 @@ namespace ComputerComplectorWebAPI.Models
         public string Expression { get; } = null;
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetCPUsRequest(string company, string series, string socket, int? coresAmount, int? threadsAmount, 
-            bool? integratedGraphics, string core, string deliveryType, bool? overcloacking, int? selectedCooler,
+        public GetCPUsRequest(string[] company, string[] series, string[] socket, int[] coresAmount, int[] threadsAmount, 
+            bool[] integratedGraphics, string[] core, string[] deliveryType, bool[] overcloacking, int? selectedCooler,
             int? selectedMotherboard)
         {
             List<string> cond = new List<string>();
@@ -35,64 +34,109 @@ namespace ComputerComplectorWebAPI.Models
             Company = company;
             if (Company != null)
             {
-                cond.Add("Company=@company");
-                Parameters.Add(new SqlParameter("@company", Company));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Company.Length; i++)
+                {
+                    con.Add($"Company=@company{i}");
+                    Parameters.Add(new SqlParameter($"@company{i}", Company[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Series = series;
             if (Series != null)
             {
-                cond.Add("Series=@series");
-                Parameters.Add(new SqlParameter("@series", Series));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Series.Length; i++)
+                {
+                    con.Add($"Series=@series{i}");
+                    Parameters.Add(new SqlParameter($"@series{i}", Series[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Socket = socket;
             if (Socket != null)
             {
-                cond.Add("Socket=@socket");
-                Parameters.Add(new SqlParameter("@socket", Socket));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Socket.Length; i++)
+                {
+                    con.Add($"Socket=@socket{i}");
+                    Parameters.Add(new SqlParameter($"@socket{i}", Socket[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             CoresAmount = coresAmount;
             if (CoresAmount != null)
             {
-                cond.Add("AmountOfCores=@coresAmount");
-                Parameters.Add(new SqlParameter("@coresAmount", CoresAmount));
+                List<string> con = new List<string>();
+                for (int i = 0; i < CoresAmount.Length; i++)
+                {
+                    con.Add($"AmountOfCores=@coresAmount{i}");
+                    Parameters.Add(new SqlParameter($"@coresAmount{i}", CoresAmount[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             ThreadsAmount = threadsAmount;
             if (ThreadsAmount != null)
             {
-                cond.Add("AmountOfThreads=@threadsAmount");
-                Parameters.Add(new SqlParameter("@threadsAmount", ThreadsAmount));
+                List<string> con = new List<string>();
+                for (int i = 0; i < ThreadsAmount.Length; i++)
+                {
+                    con.Add($"AmountOfThreads=@threadsAmount{i}");
+                    Parameters.Add(new SqlParameter($"@threadsAmount{i}", ThreadsAmount[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             IntegratedGraphics = integratedGraphics;
             if (IntegratedGraphics != null)
             {
-                cond.Add("IntegratedGraphics=@integratedGraphics");
-                Parameters.Add(new SqlParameter("@integratedGraphics", IntegratedGraphics));
+                List<string> con = new List<string>();
+                for (int i = 0; i < IntegratedGraphics.Length; i++)
+                {
+                    con.Add($"IntegratedGraphics=@integratedGraphics{i}");
+                    Parameters.Add(new SqlParameter($"@integratedGraphics{i}", IntegratedGraphics[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Core = core;
             if (Core != null)
             {
-                cond.Add("Core=@core");
-                Parameters.Add(new SqlParameter("@core", Core));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Core.Length; i++)
+                {
+                    con.Add($"Core=@core{i}");
+                    Parameters.Add(new SqlParameter($"@core{i}", Core[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             DeliveryType = deliveryType;
             if (DeliveryType != null)
             {
-                cond.Add("DeliveryType=@deliveryType");
-                Parameters.Add(new SqlParameter("@deliveryType", DeliveryType));
+                List<string> con = new List<string>();
+                for (int i = 0; i < DeliveryType.Length; i++)
+                {
+                    con.Add($"DeliveryType=@deliveryType{i}");
+                    Parameters.Add(new SqlParameter($"@deliveryType{i}", DeliveryType[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Overcloacking = overcloacking;
             if (Overcloacking != null)
             {
-                cond.Add("Overclocking=@overcloacking");
-                Parameters.Add(new SqlParameter("@overcloacking", Overcloacking));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Overcloacking.Length; i++)
+                {
+                    con.Add($"Overclocking=@overcloacking{i}");
+                    Parameters.Add(new SqlParameter($"@overcloacking{i}", Overcloacking[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             SelectedMotherboard = selectedMotherboard;

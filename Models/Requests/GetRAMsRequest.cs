@@ -9,79 +9,119 @@ namespace ComputerComplectorWebAPI.Models
 {
     public class GetRAMsRequest
     {
-        public string   Company      { get; set; }
-	    public string   Series       { get; set; }
-	    public string   Memory       { get; set; }
-	    public string   Type         { get; set; }
-	    public int?     Volume       { get; set; }
-        public int?     ModuleAmount { get; set; }
-        public int?     Freq         { get; set; }
-	    public string   CL           { get; set; }
+        public string[] Company { get; set; }
+        public string[] Series { get; set; }
+        public string[] Memory { get; set; }
+        public string[] Type { get; set; }
+        public int[] Volume { get; set; }
+        public int[] ModuleAmount { get; set; }
+        public int[] Freq { get; set; }
+        public string[] CL { get; set; }
 
         public int? SelectedMotherboard { get; private set; }
 
         public string Expression { get; } = null;
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetRAMsRequest(string company, string series, string memory, string type, int? volume, int? moduleAmount, 
-            int? freq, string cL, int? selectedMotherboard)
+        public GetRAMsRequest(string[] company, string[] series, string[] memory, string[] type, int[] volume, int[] moduleAmount,
+            int[] freq, string[] cL, int? selectedMotherboard)
         {
             List<string> cond = new List<string>();
 
             Company = company;
             if (Company != null)
             {
-                cond.Add("Company=@company");
-                Parameters.Add(new SqlParameter("@company", Company));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Company.Length; i++)
+                {
+                    con.Add($"Company=@company{i}");
+                    Parameters.Add(new SqlParameter($"@company{i}", Company[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Series = series;
             if (Series != null)
             {
-                cond.Add("Series=@series");
-                Parameters.Add(new SqlParameter("@series", Series));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Series.Length; i++)
+                {
+                    cond.Add($"Series=@series{i}");
+                    Parameters.Add(new SqlParameter($"@series{i}", Series[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Memory = memory;
             if (Memory != null)
             {
-                cond.Add("MemoryType=@memory");
-                Parameters.Add(new SqlParameter("@memory", Memory));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Memory.Length; i++)
+                {
+                    cond.Add($"MemoryType=@memory{i}");
+                    Parameters.Add(new SqlParameter($"@memory{i}", Memory[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Type = type;
             if (Type != null)
             {
-                cond.Add("Purpose=@type");
-                Parameters.Add(new SqlParameter("@type", Type));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Type.Length; i++)
+                {
+                    cond.Add($"Purpose=@type{i}");
+                    Parameters.Add(new SqlParameter($"@type{i}", Type[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Volume = volume;
             if (Volume != null)
             {
-                cond.Add("MemoryVolume=@volume");
-                Parameters.Add(new SqlParameter("@volume", Volume));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Volume.Length; i++)
+                {
+                    cond.Add($"MemoryVolume=@volume{i}");
+                    Parameters.Add(new SqlParameter($"@volume{i}", Volume[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             ModuleAmount = moduleAmount;
             if (ModuleAmount != null)
             {
-                cond.Add("ModulesCount=@moduleAmount");
-                Parameters.Add(new SqlParameter("@moduleAmount", ModuleAmount));
+                List<string> con = new List<string>();
+                for (int i = 0; i < ModuleAmount.Length; i++)
+                {
+                    cond.Add($"ModulesCount=@moduleAmount{i}");
+                    Parameters.Add(new SqlParameter($"@moduleAmount{i}", ModuleAmount[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             Freq = freq;
             if (Freq != null)
             {
-                cond.Add("Frequency=@freq");
-                Parameters.Add(new SqlParameter("@freq", Freq));
+                List<string> con = new List<string>();
+                for (int i = 0; i < Freq.Length; i++)
+                {
+                    cond.Add($"Frequency=@freq{i}");
+                    Parameters.Add(new SqlParameter($"@freq{i}", Freq[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             CL = cL;
             if (CL != null)
             {
-                cond.Add("CASLatency=@cL");
-                Parameters.Add(new SqlParameter("@cL", CL));
+                List<string> con = new List<string>();
+                for (int i = 0; i < CL.Length; i++)
+                {
+                    cond.Add($"CASLatency=@cL{i}");
+                    Parameters.Add(new SqlParameter($"@cL{i}", CL[i]));
+                }
+                cond.Add(string.Join(" OR ", con));
             }
 
             SelectedMotherboard = selectedMotherboard;

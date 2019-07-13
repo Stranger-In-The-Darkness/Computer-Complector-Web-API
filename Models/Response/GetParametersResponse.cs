@@ -17,7 +17,7 @@ namespace ComputerComplectorWebAPI.Models
         /// <summary>
         /// Dictionary of filter and it's description
         /// </summary>
-        public Dictionary<string, string> Titles; //Key - parameter, value - addition (or null)
+        public Dictionary<string, Tuple<string, string>> Titles; //Key - keyword, value - localization and addition (or null)
         /// <summary>
         /// Options for filter
         /// </summary>

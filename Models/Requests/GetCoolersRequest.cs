@@ -9,13 +9,13 @@ namespace ComputerComplectorWebAPI.Models
 {
     public class GetCoolersRequest
     {
-	    public string   Company             { get; private set; }
-	    public string   Purpose             { get; private set; }
-	    public string   Type                { get; private set; }       
-	    public string   Socket              { get; private set; }
-	    public string   Material            { get; private set; }
-	    public string   VentDiam            { get; private set; }
-	    public string   TurnAdj             { get; private set; }
+	    public string[]   Company             { get; private set; }
+	    public string[]   Purpose             { get; private set; }
+	    public string[]   Type                { get; private set; }       
+	    public string[]   Socket              { get; private set; }
+	    public string[]   Material            { get; private set; }
+	    public string[]   VentDiam            { get; private set; }
+	    public string[]   TurnAdj             { get; private set; }
 
         public int?     SelectedCpu         { get; private set; }
         public int?     SelectedMotherboard { get; private set; }
@@ -23,72 +23,93 @@ namespace ComputerComplectorWebAPI.Models
         public string Expression { get; } = null;
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetCoolersRequest(string company, string purpose, string type, string socket, string material, string ventDiam, 
-            string turnAdj, int? selectedCpu, int? selectedMotherboard)
+        public GetCoolersRequest(string[] company, string[] purpose, string[] type, string[] socket, string[] material, string[] ventDiam, 
+            string[] turnAdj, int? selectedCpu, int? selectedMotherboard)
         {
             List<string> cond = new List<string>();
 
             Company = company;
             if (Company != null)
             {
-                cond.Add("Company=@company");
-                Parameters.Add(new SqlParameter("@company", Company));
+                for (int i = 0; i < Company.Length; i++)
+                {
+                    cond.Add($"Company=@company{i}");
+                    Parameters.Add(new SqlParameter($"@company{i}", Company[i]));
+                }
             }
 
             Purpose = purpose;
             if (Purpose != null)
             {
-                cond.Add("Purpose=@purpose");
-                Parameters.Add(new SqlParameter("@purpose", Purpose));
+                for (int i = 0; i < Purpose.Length; i++)
+                {
+                    cond.Add($"Purpose=@purpose{i}");
+                    Parameters.Add(new SqlParameter($"@purpose{i}", Purpose[i]));
+                }
             }
 
             Type = type;
             if (Type != null)
             {
-                cond.Add("Type=@type");
-                Parameters.Add(new SqlParameter("@type", Type));
+                for (int i = 0; i < Type.Length; i++)
+                {
+                    cond.Add($"Type=@type{i}");
+                    Parameters.Add(new SqlParameter($"@type{i}", Type[i]));
+                }
             }
 
             Socket = socket;
             if (Socket != null)
             {
-                cond.Add("ID IN (SELECT CoolerID FROM COOLER_SOCKET WHERE Socket = @socket)");
-                Parameters.Add(new SqlParameter("@socket", Socket));
+                for (int i = 0; i < Socket.Length; i++)
+                {
+                    cond.Add($"ID IN (SELECT CoolerID FROM COOLER_SOCKET WHERE Socket = @socket{i})");
+                    Parameters.Add(new SqlParameter($"@socket{i}", Socket[i]));
+                }
             }
 
             Material = material;
             if (Material != null)
             {
-                cond.Add("Material=@material");
-                Parameters.Add(new SqlParameter("@material", Material));
+                for (int i = 0; i < Material.Length; i++)
+                {
+                    cond.Add($"Material=@material{i}");
+                    Parameters.Add(new SqlParameter("@material{i}", Material[i]));
+                }
             }
 
             VentDiam = ventDiam;
             if (VentDiam != null)
             {
-                if (VentDiam.Contains('-'))
+                for (int i = 0; i < VentDiam.Length; i++)
                 {
-                    cond.Add("Diameter>=@ventDiam1 AND Diameter<=@ventDiam2");
-                    Parameters.Add(new SqlParameter("@ventDiam1", VentDiam.Split('-')[0]));
-                    Parameters.Add(new SqlParameter("@ventDiam2", VentDiam.Split('-')[1]));
-                }
-                else if (VentDiam.Contains('+'))
-                {
-                    cond.Add("Diameter>@ventDiam");
-                    Parameters.Add(new SqlParameter("@ventDiam", VentDiam.Replace("+", "")));
-                }
-                else
-                {
-                    cond.Add("Diameter=@ventDiam");
-                    Parameters.Add(new SqlParameter("@ventDiam", VentDiam));
+                    if (VentDiam[i].Contains('-'))
+                    {
+                        cond.Add($"Diameter>=@ventDiam1{i} AND Diameter<=@ventDiam2{i}");
+                        Parameters.Add(new SqlParameter($"@ventDiam1{i}", VentDiam[i].Split('-')[0]));
+                        Parameters.Add(new SqlParameter($"@ventDiam2{i}", VentDiam[i].Split('-')[1]));
+                    }
+                    else if (VentDiam[i].Contains('+'))
+                    {
+                        cond.Add($"Diameter>@ventDiam{i}");
+                        Parameters.Add(new SqlParameter($"@ventDiam{i}", VentDiam[i].Replace("+", "")));
+                    }
+                    else
+                    {
+                        cond.Add($"Diameter=@ventDiam{i}");
+                        Parameters.Add(new SqlParameter($"@ventDiam{i}", VentDiam[i]));
+                    }
                 }
             }
 
             TurnAdj = turnAdj;
             if (TurnAdj != null)
             {
-                cond.Add("Adjustement=@turnAdj");
-                Parameters.Add(new SqlParameter("@turnAdj", TurnAdj));
+                for (int i = 0; i < TurnAdj.Length; i++)
+                {
+                    cond.Add($"Adjustement=@turnAdj{i}");
+                    Parameters.Add(new SqlParameter($"@turnAdj{i}", TurnAdj[i]));
+                }
             }
 
             SelectedCpu = selectedCpu;
@@ -113,16 +134,17 @@ namespace ComputerComplectorWebAPI.Models
 
         public IEnumerable<Cooler> Filter(IEnumerable<Cooler> coolers, IEnumerable<CPU> cpus, IEnumerable<Motherboard> motherboards)
         {
-            return coolers.
-                Where(e => Company != null ? e.Company == Company : true).
-                Where(e => Purpose != null ? e.Purpose == Purpose : true).
-                Where(e => Type != null ? e.Type == Type : true).
-                Where(e => Socket != null ? e.Socket.Contains(Socket) : true).
-                Where(e => Material != null ? e.Material == Material : true).
-                Where(e => VentDiam != null ? e.VentDiam == Convert.ToDouble(VentDiam) : true).
-                Where(e => TurnAdj != null ? e.TurnAdj == Convert.ToBoolean(TurnAdj) : true).
-                Where(e => SelectedCpu.HasValue ? e.Socket.Contains(cpus.FirstOrDefault(c => c.ID == SelectedCpu.Value)?.Socket) : true).
-                Where(e => SelectedMotherboard.HasValue ? e.Socket.Contains(motherboards.FirstOrDefault(m => m.ID == SelectedMotherboard.Value)?.Socket) : true);
+            throw new NotImplementedException();
+            //return coolers.
+            //    Where(e => Company != null ? e.Company == Company : true).
+            //    Where(e => Purpose != null ? e.Purpose == Purpose : true).
+            //    Where(e => Type != null ? e.Type == Type : true).
+            //    Where(e => Socket != null ? e.Socket.Contains(Socket) : true).
+            //    Where(e => Material != null ? e.Material == Material : true).
+            //    Where(e => VentDiam != null ? e.VentDiam == Convert.ToDouble(VentDiam) : true).
+            //    Where(e => TurnAdj != null ? e.TurnAdj == Convert.ToBoolean(TurnAdj) : true).
+            //    Where(e => SelectedCpu.HasValue ? e.Socket.Contains(cpus.FirstOrDefault(c => c.ID == SelectedCpu.Value)?.Socket) : true).
+            //    Where(e => SelectedMotherboard.HasValue ? e.Socket.Contains(motherboards.FirstOrDefault(m => m.ID == SelectedMotherboard.Value)?.Socket) : true);
         }
     }
 }

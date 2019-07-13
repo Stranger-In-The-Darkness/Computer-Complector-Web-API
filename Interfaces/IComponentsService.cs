@@ -48,6 +48,6 @@ namespace ComputerComplectorWebAPI.Interfaces
         IEnumerable<Videocard> GetVideocards(GetVideocardsRequest request);
         Videocard GetVideocard(int id);
 
-        Dictionary<string, (bool, string, List<string>)> GetParameters(string component);
+        string GetParameters(string component, string language);
     }
 }

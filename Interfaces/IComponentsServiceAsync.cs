@@ -47,7 +47,5 @@ namespace ComputerComplectorWebAPI.Interfaces
         Task<IEnumerable<Videocard>> GetVideocards();
         Task<IEnumerable<Videocard>> GetVideocards(GetVideocardsRequest request);
         Task<Videocard> GetVideocard(int id);
-
-        Task<Dictionary<string, (bool, string, List<string>)>> GetParameters(string component);
     }
 }

@@ -1,0 +1,72 @@
+﻿.elements-list {
+    grid-column: 3 / span 5;
+    display: grid;
+    overflow-y: scroll;
+    width: 100%;
+    min-width: 100px;
+}
+
+.element {
+    background: #383838;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.element.selected {
+    background: #385238;
+}
+
+.element-header {
+    background: rgba(255, 255, 255, 0);
+    padding: 2px 2px 2px 5px;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.element-property {
+    color: white;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0);
+    padding: 5px 2px;
+}
+
+.element-info {
+    margin: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0);
+    width: 90%;
+}
+
+.element-info tbody, th, tr {
+    background: none;
+}
+
+.element-select-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: 0px 0px 5px rgba(153, 255, 143, 1);
+    font-size: 30px;
+    cursor: pointer;
+    background: rgba(50, 50, 50, 0.75);
+}
+
+.element-select-btn.remove-btn {
+    text-shadow: 0px 0px 5px rgba(255, 153, 143, 1);
+}
+
+.element-select-btn:hover {
+    filter: drop-shadow(0px 0px 5px rgba(153, 255, 143, 1));
+}
+
+.element-select-btn.remove-btn:hover {
+    filter: drop-shadow(0px 0px 5px rgba(255, 153, 143, 1));
+}

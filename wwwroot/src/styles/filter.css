@@ -1,0 +1,41 @@
+﻿.filters-list {
+    height: 100%;
+    grid-column: 1 / span 2;
+    overflow-y: hidden;
+    display: grid;
+    background: none;
+    width: 100%;
+}
+
+.filter {
+    border-radius: 10px;
+    border: 1px solid black;
+    padding: 10px;
+    margin: 5px;
+    background: #383838;
+}
+
+.filter-header {
+    text-align: center;
+    background: none;
+    color: white;
+    font-size: 16px;
+}
+
+.filter-options {
+    list-style-type: none;
+    background: none;
+    width: 100%;
+    border: none;
+    margin-top: 10px;
+    color: white;
+}
+
+#filtersList {
+    background: none;
+    overflow-y: scroll;
+}
+
+#filtersList li {
+    background: none;
+}
