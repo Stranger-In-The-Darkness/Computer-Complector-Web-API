@@ -4,8 +4,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ComputerComplectorWebAPI.Models.Data;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetChargersRequest
     { 
@@ -22,7 +23,7 @@ namespace ComputerComplectorWebAPI.Models
         public int? SelectedMotherboard { get; private set; }
         public int? SelectedVideocard { get; private set; }
 
-        public string Expression { get; } = null;
+        public string Expression { get; } = "SELECT * FROM CHARGER";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetChargersRequest(string[] company, string[] series, string[] power, string[] sertificate, int[] videoConnectorsAmount, 
@@ -192,26 +193,8 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0) 
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
-        }
-
-        public IEnumerable<Charger> Filter (IEnumerable<Charger> chargers, IEnumerable<Motherboard> motherboards, IEnumerable<Videocard> videocards)
-        {
-            throw new NotImplementedException();
-            //return chargers.
-            //    Where(e => IDEAmount != null ? IDEAmount.Contains(e.IDEAmount.ToString()) : true).
-            //    Where(e => MotherboardConnector != null ? e.MotherboardConnector == MotherboardConnector : true).
-            //    Where(e => 
-            //    {
-            //        var m = motherboards.FirstOrDefault(i => i.ID == SelectedMotherboard);
-            //        return m != null ? e.MotherboardConnector == m.Pin && e.ConnectorType == m.CPUPin : true;
-            //    }).
-            //    Where(e =>
-            //    {
-            //        var v = videocards.FirstOrDefault(i => i.ID == SelectedMotherboard);
-            //        return v != null ? e.VideocardConnector == v.Pin : true;
-            //    });
         }
     }
 }

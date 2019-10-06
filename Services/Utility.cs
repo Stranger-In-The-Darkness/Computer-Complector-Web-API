@@ -10,28 +10,30 @@ using ComputerComplectorWebAPI.Interfaces;
 
 namespace ComputerComplectorWebAPI.Services
 {
-    public class Utility : IUtilityAsync
+    public class DBUtility : IUtilityAsync
     {
         private SqlConnection _connection;
 
-        public Utility(string connectionString)
+        public DBUtility(string connectionString)
         {
+            if (string.IsNullOrEmpty(connectionString) || string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new ArgumentException("Connection string cannot be null or empty!");
+            }
             _connection = new SqlConnection(connectionString);
         }
 
-        ~Utility()
+        ~DBUtility()
         {
             Close();
         }
 
-        public async Task<SqlDataReader> Execute(string command)
+        public async Task<SqlDataReader> ExecuteReader(string command)
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
-
-            SqlDataReader reader = null;
 
             SqlCommand comm = new SqlCommand(command, _connection);
 
@@ -43,19 +45,15 @@ namespace ComputerComplectorWebAPI.Services
                 }
             }
 
-            reader = await comm.ExecuteReaderAsync();
-
-            return reader;
+            return await comm.ExecuteReaderAsync();
         }
 
-        public async Task<SqlDataReader> Execute(string command, params SqlParameter[] parameters)
+        public async Task<SqlDataReader> ExecuteReader(string command, params SqlParameter[] parameters)
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
-
-            SqlDataReader reader = null;
 
             SqlCommand comm = new SqlCommand(command, _connection);
             comm.Parameters.AddRange(parameters.ToArray());
@@ -68,19 +66,15 @@ namespace ComputerComplectorWebAPI.Services
                 }
             }
 
-            reader = await comm.ExecuteReaderAsync();
-
-            return reader;
+            return await comm.ExecuteReaderAsync();
         }
 
-        public async Task<SqlDataReader> Execute(string command, List<SqlParameter> parameters)
+        public async Task<SqlDataReader> ExecuteReader(string command, List<SqlParameter> parameters)
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
-
-            SqlDataReader reader = null;
 
             SqlCommand comm = new SqlCommand(command, _connection);
             comm.Parameters.AddRange(parameters.ToArray());
@@ -93,9 +87,69 @@ namespace ComputerComplectorWebAPI.Services
                 }
             }
 
-            reader = await comm.ExecuteReaderAsync();
+            return await comm.ExecuteReaderAsync();
+        }
 
-            return reader;
+        public async Task<int> ExecuteNonQuery(string command)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+
+            SqlCommand comm = new SqlCommand(command, _connection);
+
+            lock (_connection)
+            {
+                if (_connection.State == ConnectionState.Closed || _connection.State == ConnectionState.Broken)
+                {
+                    _connection.Open();
+                }
+            }
+
+            return await comm.ExecuteNonQueryAsync();
+        }
+
+        public async Task<int> ExecuteNonQuery(string command, params SqlParameter[] parameters)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+
+            SqlCommand comm = new SqlCommand(command, _connection);
+            comm.Parameters.AddRange(parameters);
+
+            lock (_connection)
+            {
+                if (_connection.State == ConnectionState.Closed || _connection.State == ConnectionState.Broken)
+                {
+                    _connection.Open();
+                }
+            }
+
+            return await comm.ExecuteNonQueryAsync();
+        }
+
+        public async Task<int> ExecuteNonQuery(string command, List<SqlParameter> parameters)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+
+            SqlCommand comm = new SqlCommand(command, _connection);
+            comm.Parameters.AddRange(parameters.ToArray());
+
+            lock (_connection)
+            {
+                if (_connection.State == ConnectionState.Closed || _connection.State == ConnectionState.Broken)
+                {
+                    _connection.Open();
+                }
+            }
+
+            return await comm.ExecuteNonQueryAsync();
         }
 
         public void Close()

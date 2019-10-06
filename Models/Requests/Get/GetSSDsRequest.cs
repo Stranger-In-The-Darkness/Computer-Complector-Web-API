@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetSSDsRequest
     {
@@ -18,7 +18,7 @@ namespace ComputerComplectorWebAPI.Models
 
         public int? SelectedMotherboard { get; private set; }
 
-        public string Expression { get; } = null;
+        public string Expression { get; } = "SELECT * FROM SSD s JOIN SSD_INTERFACE si ON s.ID = si.SSDID";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetSSDsRequest(string[] company, string[] series, string[] capacity, string[] formfactor, string[] @interface, 
@@ -115,7 +115,7 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0)
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
         }
     }

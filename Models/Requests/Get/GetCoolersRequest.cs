@@ -4,8 +4,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ComputerComplectorWebAPI.Models.Data;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetCoolersRequest
     {
@@ -20,7 +21,7 @@ namespace ComputerComplectorWebAPI.Models
         public int?     SelectedCpu         { get; private set; }
         public int?     SelectedMotherboard { get; private set; }
 
-        public string Expression { get; } = null;
+        public string Expression { get; } = "SELECT * FROM COOLER c JOIN COOLER_SOCKET cs on c.ID = cs.CoolerID";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetCoolersRequest(string[] company, string[] purpose, string[] type, string[] socket, string[] material, string[] ventDiam, 
@@ -128,7 +129,7 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0)
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
         }
 

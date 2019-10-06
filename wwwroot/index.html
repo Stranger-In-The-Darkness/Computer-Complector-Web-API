@@ -13,11 +13,14 @@
 </head>
 <body onresize="$('.elements').height($(window).height() - $('.parts').height());">
     <div class="main">
+        <div class="header">
+            <input type="button" placeholder="Login" value="Login2" />
+        </div>
         <!--<div class="mainHeader"></div>-->
         <div class="parts" id="partsTab">
             <div class="part">
                 <button class="part-btn selected-part" onclick="tab.change('body'); $('.part-btn').removeClass('selected-part'); $(this).addClass('selected-part');" onmouseover="$(this).addClass('hover');" onmouseout="$(this).removeClass('hover');">
-                    <img src="src/img/BODY.png" class="part-img"/>
+                    <img src="src/img/BODY.png" class="part-img" />
                     <div class="part-name">Body</div>
                 </button>
             </div>

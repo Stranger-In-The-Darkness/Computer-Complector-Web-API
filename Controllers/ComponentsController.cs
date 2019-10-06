@@ -10,6 +10,12 @@ using ComputerComplectorWebAPI.Models;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Authorization;
+using ComputerComplectorWebAPI.Models.Data;
+using ComputerComplectorWebAPI.Models.Requests.Get;
+using ComputerComplectorWebAPI.Models.Requests.Add;
+using ComputerComplectorWebAPI.Models.Requests.Update;
+using ComputerComplectorWebAPI.Models.Requests.Remove;
 
 namespace ComputerComplectorWebAPI.Controllers
 {
@@ -29,7 +35,8 @@ namespace ComputerComplectorWebAPI.Controllers
             _localizer = localizer;
         }
 
-        #region Properties
+        #region GET
+        #region PROPERTIES
         /// <summary>
         /// 
         /// </summary>
@@ -611,24 +618,338 @@ namespace ComputerComplectorWebAPI.Controllers
         {
             return await _componentService.GetVideocard(id);
         }
+		#endregion
 
-        //// POST api/values
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+		#region POST
+		// POST api/values
+		[Authorize (Roles = "ADMIN")]
+		[HttpPost("body")]
+        public async Task<IEnumerable<Body>> PostBody([FromBody]Body value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				return await _componentService.AddBody(new AddBodyRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
 
-        //// PUT api/values/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("charger")]
+        public async Task<IEnumerable<Charger>> PostCharger([FromBody]Charger value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddCharger(new AddChargerRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
 
-        //// DELETE api/values/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("cooler")]
+        public async Task<IEnumerable<Cooler>> PostCooler([FromBody]Cooler value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddCooler(new AddCoolerRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
 
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("cpu")]
+        public async Task<IEnumerable<CPU>> PostCPU([FromBody]CPU value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddCPU(new AddCpuRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("hdd")]
+        public async Task<IEnumerable<HDD>> PostHDD([FromBody]HDD value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddHDD(new AddHddRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("motherboard")]
+        public async Task<IEnumerable<Motherboard>> PostMotherboard([FromBody]Motherboard value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddMotherboard(new AddMotherboardRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("ram")]
+        public async Task<IEnumerable<RAM>> PostRAM([FromBody]RAM value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddRAM(new AddRamRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("ssd")]
+        public async Task<IEnumerable<SSD>> PostSSD([FromBody]SSD value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddSSD(new AddSsdRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("videocard")]
+        public async Task<IEnumerable<Videocard>> PostVideocard([FromBody]Videocard value)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return await _componentService.AddVideocard(new AddVideocardRequest(value));
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+            }
+        }
+		#endregion
+
+		#region PUT
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("body/{id}")]
+        public async Task<IEnumerable<Body>> PutBody(int id, [FromBody]Body value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceBody(new UpdateBodyRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("charger/{id}")]
+        public async Task<IEnumerable<Charger>> PutCharger(int id, [FromBody]Charger value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceCharger(new UpdateChargerRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("cooler/{id}")]
+        public async Task<IEnumerable<Cooler>> PutCooler(int id, [FromBody]Cooler value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceCooler(new UpdateCoolerRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("cpu/{id}")]
+        public async Task<IEnumerable<CPU>> PutCPU(int id, [FromBody]CPU value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceCPU(new UpdateCPURequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("hdd/{id}")]
+        public async Task<IEnumerable<HDD>> PutHDD(int id, [FromBody]HDD value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceHDD(new UpdateHDDRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("motherboard/{id}")]
+        public async Task<IEnumerable<Motherboard>> PutMotherboard(int id, [FromBody]Motherboard value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceMotherboard(new UpdateMotherboardRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("ram/{id}")]
+        public async Task<IEnumerable<RAM>> PutRAM(int id, [FromBody]RAM value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceRAM(new UpdateRAMRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("ssd/{id}")]
+        public async Task<IEnumerable<SSD>> PutSSD(int id, [FromBody]SSD value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceSSD(new UpdateSSDRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("videocard/{id}")]
+        public async Task<IEnumerable<Videocard>> PutVideocard(int id, [FromBody]Videocard value)
+        {
+			if (User.Identity.IsAuthenticated)
+			{
+				value.ID = id;
+				return await _componentService.ReplaceVideocard(new UpdateVideocardRequest(value));
+			}
+			else
+			{
+				throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
+			}
+		}
+		#endregion
+
+		#region DELETE
+		// DELETE api/values/5
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("body/{id}")]
+        public async Task<IEnumerable<Body>> DeleteBody(int id)
+        {
+			return await _componentService.RemoveBody(new RemoveBodyRequest(id));
+        }
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("charger/{id}")]
+        public async Task<IEnumerable<Charger>> DeleteCharger(int id)
+        {
+			return await _componentService.RemoveCharger(new RemoveChargerRequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("cooler/{id}")]
+        public async Task<IEnumerable<Cooler>> DeleteCooler(int id)
+        {
+			return await _componentService.RemoveCooler(new RemoveCoolerRequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("cpu/{id}")]
+        public async Task<IEnumerable<CPU>> DeleteCPU(int id)
+        {
+			return await _componentService.RemoveCPU(new RemoveCPURequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("hdd/{id}")]
+        public async Task<IEnumerable<HDD>> DeleteHDD(int id)
+        {
+			return await _componentService.RemoveHDD(new RemoveHDDRequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("motherboard/{id}")]
+        public async Task<IEnumerable<Motherboard>> DeleteMotherboard(int id)
+        {
+			return await _componentService.RemoveMotherboard(new RemoveMotherboardRequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("ram/{id}")]
+        public async Task<IEnumerable<RAM>> DeleteRAM(int id)
+        {
+			return await _componentService.RemoveRAM(new RemoveRAMRequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("ssd/{id}")]
+        public async Task<IEnumerable<SSD>> DeleteSSD(int id)
+        {
+			return await _componentService.RemoveSSD(new RemoveSSDRequest(id));
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("videocard/{id}")]
+        public async Task<IEnumerable<Videocard>> DeleteVideocard(int id)
+        {
+			return await _componentService.RemoveVideocard(new RemoveVideocardRequest(id));
+		}
+        #endregion
     }
 }

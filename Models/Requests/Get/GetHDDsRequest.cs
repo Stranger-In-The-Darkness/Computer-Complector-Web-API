@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetHDDsRequest
     {
@@ -19,7 +19,7 @@ namespace ComputerComplectorWebAPI.Models
 
         public int? SelectedMotherboard { get; private set; }
 
-        public string Expression { get; }
+        public string Expression { get; } = "SELECT * FROM HDD h JOIN HDD_INTERFACE hd on h.ID = hd.HDDID";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetHDDsRequest(string[] company, string[] formfactor, string[] volume, string[] @interface, int[] bufferVolume, 
@@ -133,7 +133,7 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0)
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
         }
     }

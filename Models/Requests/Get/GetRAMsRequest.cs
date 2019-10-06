@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetRAMsRequest
     {
@@ -20,7 +20,7 @@ namespace ComputerComplectorWebAPI.Models
 
         public int? SelectedMotherboard { get; private set; }
 
-        public string Expression { get; } = null;
+        public string Expression { get; } = "SELECT * FROM RAM";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetRAMsRequest(string[] company, string[] series, string[] memory, string[] type, int[] volume, int[] moduleAmount,
@@ -133,7 +133,7 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0)
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
         }
     }

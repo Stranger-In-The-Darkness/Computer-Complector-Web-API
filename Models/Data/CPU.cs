@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ComputerComplectorWebAPI.Models
+﻿namespace ComputerComplectorWebAPI.Models.Data
 {
-    public class CPU
+	public class CPU
     {
         public int     ID                  { get; set; }
         public string  Title               { get; set; }

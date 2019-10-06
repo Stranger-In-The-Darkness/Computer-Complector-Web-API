@@ -354,6 +354,9 @@ const element = {
             }
         }
     },
+    post: function (element) { },
+    put: function (id, element) { },
+    delete: function (id) { },
     format: function (value, type) {
         var inner = "";
         if (element.selected[type] !== null && value.id === element.selected[type].id) {

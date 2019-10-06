@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetMotherboardsRequest
     {
@@ -29,7 +29,7 @@ namespace ComputerComplectorWebAPI.Models
         public int? SelectedHdd { get; private set; }
         public int? SelectedCpu { get; private set; }
 
-        public string Expression { get; } = null;
+        public string Expression { get; } = "SELECT * FROM MOTHERBOARD m JOIN MOTHERBOARD_SLOTS ms on m.ID = ms.MotherboardID";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetMotherboardsRequest(string[] company, string[] series, string[] socket, string[] chipset, string[] formfactor,
@@ -237,7 +237,7 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0)
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
         }
     }

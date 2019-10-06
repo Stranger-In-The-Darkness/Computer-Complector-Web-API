@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ComputerComplectorWebAPI.Models;
+using ComputerComplectorWebAPI.Models.Data;
+using ComputerComplectorWebAPI.Models.Requests.Get;
 
 namespace ComputerComplectorWebAPI.Interfaces
 {

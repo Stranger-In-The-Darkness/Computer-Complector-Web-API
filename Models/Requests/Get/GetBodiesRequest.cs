@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using ComputerComplectorWebAPI.Models.Data;
 
-namespace ComputerComplectorWebAPI.Models
+namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
     public class GetBodiesRequest
     {
@@ -19,7 +20,7 @@ namespace ComputerComplectorWebAPI.Models
         public int? SelectedMotherboard { get; private set; }
         public int? SelectedVideocard { get; private set; }
 
-        public string Expression { get; } = null;
+        public string Expression { get; } = "SELECT * FROM BODY";
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
         public GetBodiesRequest(string[] company, string[] formfactor, string[] type, bool[] buildInCharger, string[] chargerPower,
@@ -85,7 +86,7 @@ namespace ComputerComplectorWebAPI.Models
                 List<string> con = new List<string>();
                 for (int i = 0; i < ChargerPower.Length; i++)
                 {
-                    con.Add($"ChargerPower>=@chargerPower1{i} AND ChargerPower<=@chargerPower2{i}");
+                    con.Add($"(ChargerPower>=@chargerPower1{i} AND ChargerPower<=@chargerPower2{i})");
                     Parameters.Add(new SqlParameter($"@chargerPower1{i}", ChargerPower[i].Split('-')[0]));
                     Parameters.Add(new SqlParameter($"@chargerPower2{i}", ChargerPower[i].Split('-')[1]));
                 }
@@ -122,7 +123,7 @@ namespace ComputerComplectorWebAPI.Models
 
             if (cond.Count > 0)
             {
-                Expression = string.Join(" AND ", cond);
+                Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
         }
 
@@ -135,7 +136,7 @@ namespace ComputerComplectorWebAPI.Models
                 Where(e => BuildInCharger != null ? BuildInCharger.Contains(e.BuildInCharger) : true).
                 Where(e => ChargerPower != null ? ChargerPower.Select(o => e.ChargerPower >= int.Parse(o.Split('-')[0])).Contains(true) : true).
                 Where(e => ChargerPower != null ? ChargerPower.Select(o => e.ChargerPower <= int.Parse(o.Split('-')[1])).Contains(true) : true).
-                Where(e => Usb3Ports != null ? Usb3Ports.Contains(e.USB3Ports.ToString()) : true).
+                Where(e => Usb3Ports != null ? Usb3Ports.Contains(e.USB3Amount.ToString()) : true).
                 Where(e => { var m = motherboards.FirstOrDefault(i => i.ID == SelectedMotherboard); return m != null ? e.Formfactor == m.Formfactor : true; }).
                 Where(e => { var v = videocards.FirstOrDefault(i => i.ID == SelectedVideocard); return v != null ? e.VideocardMaxLength >= int.Parse(v.Length) : true; });
         }

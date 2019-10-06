@@ -185,15 +185,21 @@
     "addition": false,
     "additionText": "",
     "values": [
-      "White",
-      "White+Black",
-      "Black",
-      "Black+Red",
-      "Black+White",
-      "Blue",
-      "Blue+Black",
-      "Silver",
-      "RGB"
+      1,
+	  2,
+	  3, 
+	  4
+    ]
+  },
+  "usb-2.0-amount": {
+    "text": "Amount of USB 2.0 ports",
+    "addition": false,
+    "additionText": "",
+    "values": [
+      1,
+	  2,
+	  3,
+	  4
     ]
   }
 }</value>
