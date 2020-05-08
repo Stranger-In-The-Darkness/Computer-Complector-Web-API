@@ -7,12 +7,26 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddVideocardRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.Videocard"/> to the DB
+	/// </summary>
+	public class AddVideocardRequest : AddRequestBase
     {
-        private Videocard _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private Videocard _element;
 
-        public AddVideocardRequest(Videocard element)
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
+		public AddVideocardRequest(Videocard element)
         {
             _element = element;
 
@@ -65,11 +79,20 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } = 
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } = 
             "INSERT INTO VIDEOCARD VALUES (@gpu, @vram, @company, @series, @capacity, @memory, @title, @family, @length, @pin);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public Videocard Videocard { get => _element; }
     }
 }

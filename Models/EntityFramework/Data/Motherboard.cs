@@ -44,22 +44,22 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.Motherboard()
 			{
-				Company = motherboard.Company,
+				Company = motherboard.Company?.Trim(),
 				ID = motherboard.ID,
-				Socket = motherboard.Socket,
-				Title = motherboard.Title,
-				Chipset = motherboard.Chipset,
-				CPUCompany = motherboard.CPUCompany,
-				CPUPin = motherboard.CPUPin,
-				Formfactor = motherboard.Formfactor,
+				Socket = motherboard.Socket?.Trim(),
+				Title = motherboard.Title?.Trim(),
+				Chipset = motherboard.Chipset?.Trim(),
+				CPUCompany = motherboard.CPUCompany?.Trim(),
+				CPUPin = motherboard.CPUPin?.Trim(),
+				Formfactor = motherboard.Formfactor?.Trim(),
 				MaxMemory = motherboard.MaximumMemory,
 				MemoryChanelsAmount = motherboard.AmountOfMemoryChanels,
 				MemorySlotsAmount = motherboard.AmountOfMemorySlots,
-				MemoryType = motherboard.MemoryType,
-				Pin = motherboard.Pin,
+				MemoryType = motherboard.MemoryType?.Trim(),
+				Pin = motherboard.Pin?.Trim(),
 				RAMMaxFreq = motherboard.MaximumRAMFrequency,
-				Series = motherboard.Series,
-				Slots = motherboard.Slots.Select(e => e.Slot).ToList()
+				Series = motherboard.Series?.Trim(),
+				Slots = motherboard.Slots?.Select(e => e.Slot.Trim()).ToList()
 			};
 		}
 
@@ -83,7 +83,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				MaximumRAMFrequency = motherboard.RAMMaxFreq,
 				Series = motherboard.Series
 			};
-			el.Slots = motherboard.Slots.Select(e => new MotherboardSlot() { Motherboard = el, Slot = e }).ToList();
+			el.Slots = motherboard.Slots?.Select(e => new MotherboardSlot() { Motherboard = el, Slot = e }).ToList();
 			return el;
 		}
 

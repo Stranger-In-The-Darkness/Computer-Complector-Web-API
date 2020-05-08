@@ -29,14 +29,14 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.SSD()
 			{
-				Company = ssd.Company,
+				Company = ssd.Company?.Trim(),
 				ID = ssd.ID,
-				Title = ssd.Title,
+				Title = ssd.Title?.Trim(),
 				Capacity = ssd.Capacity,
-				CellType = ssd.CellType,
-				Formfactor = ssd.Formfactor,
-				Interface = ssd.Interface.Select(e => e.Interface).ToList(),
-				Series = ssd.Series
+				CellType = ssd.CellType?.Trim(),
+				Formfactor = ssd.Formfactor?.Trim(),
+				Interface = ssd.Interface?.Select(e => e.Interface.Trim()).ToList(),
+				Series = ssd.Series?.Trim()
 			};
 		}
 		public static implicit operator SSD(DATA.SSD ssd)
@@ -52,7 +52,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				Series = ssd.Series
 			};
 
-			el.Interface = ssd.Interface.Select(e => new SSDInterface() { SSD = el, Interface = e }).ToList();
+			el.Interface = ssd.Interface?.Select(e => new SSDInterface() { SSD = el, Interface = e }).ToList();
 			return el;
 		}
 

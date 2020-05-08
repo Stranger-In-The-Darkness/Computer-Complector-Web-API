@@ -7,12 +7,26 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddCpuRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.CPU"/> to the DB
+	/// </summary>
+	public class AddCpuRequest : AddRequestBase
     {
-        private CPU _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private CPU _element;
 
-        public AddCpuRequest(CPU element)
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
+		public AddCpuRequest(CPU element)
         {
             _element = element;
 
@@ -69,11 +83,20 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } =
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } =
             "INSERT INTO CPU VALUES (@company, @series, @socket, @freq, @cores, @threads, @graphics, @core, @delivery, @overclocking, @title);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public CPU CPU { get => _element; }
     }
 }

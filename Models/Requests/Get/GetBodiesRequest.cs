@@ -1,29 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Get
 {
-    public class GetBodiesRequest
+	/// <summary>
+	/// Request of getting <see cref="Body"/> element according to filters
+	/// </summary>
+	public class GetBodiesRequest
     {
-        public string[]   Company           { get; private set; }
-        public string[]   Formfactor        { get; private set; }
-        public string[]   Type              { get; private set; }
-        public bool[]     BuildInCharger    { get; private set; }
-        public string[]   ChargerPower      { get; private set; }
-        public string[]   Usb3Ports         { get; private set; }
-        //public string   BacklightColor    { get; private set; }
+		/// <summary>
+		/// Array of appliable <see cref="Body.Company"/> values
+		/// </summary>
+        public string[] Company { get; private set; }
 
+		/// <summary>
+		/// Array of appliable <see cref="Body.Formfactor"/> values
+		/// </summary>
+        public string[] Formfactor { get; private set; }
+
+		/// <summary>
+		/// Array of appliable <see cref="Body.Type"/> values
+		/// </summary>
+        public string[] Type { get; private set; }
+
+		/// <summary>
+		/// Array of appliable <see cref="Body.BuildInCharger"/> values
+		/// </summary>
+        public bool[] BuildInCharger { get; private set; }
+
+		/// <summary>
+		/// Array of appliable <see cref="Body.ChargerPower"/> values
+		/// </summary>
+        public string[] ChargerPower { get; private set; }
+
+		/// <summary>
+		/// Array of appliable <see cref="Body.USB3Amount"/> values
+		/// </summary>
+        public string[] Usb3Ports { get; private set; }
+
+		/// <summary>
+		/// ID of selected <see cref="Motherboard"/>
+		/// </summary>
         public int? SelectedMotherboard { get; private set; }
+
+		/// <summary>
+		/// ID of selected <see cref="Videocard"/>
+		/// </summary>
         public int? SelectedVideocard { get; private set; }
 
+		/// <summary>
+		/// SQL query
+		/// </summary>
         public string Expression { get; } = "SELECT * FROM BODY";
+
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
         public List<SqlParameter> Parameters { get; } = new List<SqlParameter>();
 
-        public GetBodiesRequest(string[] company, string[] formfactor, string[] type, bool[] buildInCharger, string[] chargerPower,
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="company">Appliable <see cref="Body.Company"/> values</param>
+		/// <param name="formfactor">Appliable <see cref="Body.Formfactor"/> values</param>
+		/// <param name="type">Appliable <see cref="Body.Type"/> values</param>
+		/// <param name="buildInCharger">Appliable <see cref="Body.BuildInCharger"/> values</param>
+		/// <param name="chargerPower">Appliable <see cref="Body.ChargerPower"/> values</param>
+		/// <param name="usbPorts">Appliable <see cref="Body.USB3Amount"/> values</param>
+		/// <param name="selectedMotherboard">ID of selected <see cref="Motherboard"/></param>
+		/// <param name="selectedVideocard">ID of selected <see cref="Videocard"/></param>
+		public GetBodiesRequest(string[] company, string[] formfactor, string[] type, bool[] buildInCharger, string[] chargerPower,
             string[] usbPorts, int? selectedMotherboard, int? selectedVideocard)
         {
             List<string> cond = new List<string>();
@@ -125,24 +172,6 @@ namespace ComputerComplectorWebAPI.Models.Requests.Get
             {
                 Expression += $" WHERE {string.Join(" AND ", cond)}";
             }
-        }
-
-        public IEnumerable<Body> Filter(IEnumerable<Body> bodies, IEnumerable<Motherboard> motherboards, IEnumerable<Videocard> videocards)
-        {
-            return bodies.
-                Where(e => Company != null ? Company.Contains(e.Company) : true).
-                Where(e => Formfactor != null ? Formfactor.Contains(e.Formfactor) : true).
-                Where(e => Type != null ? Type.Contains(e.Type) : true).
-                Where(e => BuildInCharger != null ? BuildInCharger.Contains(e.BuildInCharger) : true).
-                Where(e => ChargerPower != null ? ChargerPower.Select(o => e.ChargerPower >= int.Parse(o.Split('-')[0])).Contains(true) : true).
-                Where(e => ChargerPower != null ? ChargerPower.Select(o => e.ChargerPower <= int.Parse(o.Split('-')[1])).Contains(true) : true).
-                Where(e => Usb3Ports != null ? Usb3Ports.Contains(e.USB3Amount.ToString()) : true).
-                Where(e => { var m = motherboards.FirstOrDefault(i => i.ID == SelectedMotherboard); return m != null ? e.Formfactor == m.Formfactor : true; }).
-                Where(e => { var v = videocards.FirstOrDefault(i => i.ID == SelectedVideocard); return v != null ? e.VideocardMaxLength >= int.Parse(v.Length) : true; });
-        }
-
-        public GetBodiesRequest()
-        {
         }
     }
 }

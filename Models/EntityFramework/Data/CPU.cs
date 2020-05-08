@@ -31,24 +31,24 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		[Required]
 		public string DeliveryType { get; set; }
 		[Required]
-		public bool Overcloacking { get; set; }
+		public bool Overclocking { get; set; }
 
 		public static implicit operator DATA.CPU(CPU cpu)
 		{
 			return new DATA.CPU()
 			{
-				Company = cpu.Company,
-				Core = cpu.Core,
+				Company = cpu.Company?.Trim(),
+				Core = cpu.Core?.Trim(),
 				CoresAmount = cpu.AmountOfCores,
-				DeliveryType = cpu.DeliveryType,
+				DeliveryType = cpu.DeliveryType?.Trim(),
 				Frequency = cpu.Frequency,
 				ID = cpu.ID,
 				IntegratedGraphics = cpu.IntegratedGraphics,
-				Overcloacking = cpu.Overcloacking,
-				Series = cpu.Series,
-				Socket = cpu.Socket,
+				Overcloacking = cpu.Overclocking,
+				Series = cpu.Series?.Trim(),
+				Socket = cpu.Socket?.Trim(),
 				ThreadsAmount = cpu.AmountOfThreads,
-				Title = cpu.Title
+				Title = cpu.Title?.Trim()
 			};
 		}
 
@@ -63,7 +63,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				Frequency = cpu.Frequency,
 				ID = cpu.ID,
 				IntegratedGraphics = cpu.IntegratedGraphics,
-				Overcloacking = cpu.Overcloacking,
+				Overclocking = cpu.Overcloacking,
 				Series = cpu.Series,
 				Socket = cpu.Socket,
 				AmountOfThreads = cpu.ThreadsAmount,
@@ -83,7 +83,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 			IntegratedGraphics = cpu.IntegratedGraphics;
 			Core = cpu.Core;
 			DeliveryType = cpu.DeliveryType;
-			Overcloacking = cpu.Overcloacking;
+			Overclocking = cpu.Overclocking;
 	}
 	}
 }

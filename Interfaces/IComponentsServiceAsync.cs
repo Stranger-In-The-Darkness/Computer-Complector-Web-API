@@ -12,10 +12,10 @@ using ComputerComplectorWebAPI.Models.Requests.Update;
 
 namespace ComputerComplectorWebAPI.Interfaces
 {
-    /// <summary>
-    /// Asynchronous user-controller
-    /// </summary>
-    public interface IComponentsServiceAsync
+	/// <summary>
+	/// Interface of asynchronous components provider service
+	/// </summary>
+	public interface IComponentsServiceAsync
     {
         Task<IEnumerable<Body>> GetBodies();
         Task<IEnumerable<Body>> GetBodies(GetBodiesRequest request);
@@ -79,5 +79,15 @@ namespace ComputerComplectorWebAPI.Interfaces
         Task<IEnumerable<Videocard>> AddVideocard(AddVideocardRequest request);
 		Task<IEnumerable<Videocard>> RemoveVideocard(RemoveVideocardRequest request);
 		Task<IEnumerable<Videocard>> ReplaceVideocard(UpdateVideocardRequest request);
+
+		Task<IEnumerable<Property>> GetProperties(string component);
+		Task<IEnumerable<Property>> AddProperty(string component, Property property);
+		Task<IEnumerable<Property>> AddPropertyValue(string component, string propertyName, string value);
+		Task<IEnumerable<Property>> AddPropertiesFromJSON(string component, string json);
+		Task<IEnumerable<Property>> RemoveProperty(string component, Property property);
+		Task<IEnumerable<Property>> RemovePropertyValue(string component, string propertyName, string value);
+		Task<IEnumerable<Property>> ChangeProperty(string component, Property oldProperty, Property newProperty);
+
+		IDictionary<string, string> GetDescription(string component);
 	}
 }

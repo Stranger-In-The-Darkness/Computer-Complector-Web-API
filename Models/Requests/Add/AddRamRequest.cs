@@ -7,12 +7,26 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddRamRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.RAM"/> to the DB
+	/// </summary>
+	public class AddRamRequest : AddRequestBase
     {
-        private RAM _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private RAM _element;
 
-        public AddRamRequest(RAM element)
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
+		public AddRamRequest(RAM element)
         {
             _element = element;
 
@@ -59,11 +73,20 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } =
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } =
             "INSERT INTO RAM VALUES (@title, @purpose, @memoryType, @memoryVolume, @modulesAmount, @frequency, @company, @series, @casLatency);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public RAM RAM { get => _element; }
     }
 }

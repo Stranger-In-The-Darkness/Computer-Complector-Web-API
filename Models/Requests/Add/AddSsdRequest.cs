@@ -7,12 +7,26 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddSsdRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.SSD"/> to the DB
+	/// </summary>
+	public class AddSsdRequest : AddRequestBase
     {
-        private SSD _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private SSD _element;
 
-        public AddSsdRequest(SSD element)
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
+		public AddSsdRequest(SSD element)
         {
             _element = element;
 
@@ -55,11 +69,20 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } = 
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } = 
             "INSERT INTO SSD VALUES (@title, @volume, @series, @company, @formfactor, @cellType);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public SSD SSD { get => _element; }
     }
 }

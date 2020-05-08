@@ -19,8 +19,9 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		public string	Title				{ get; set; }
 		[Required]
 		public string	Company				{ get; set; }
-		[Required]
-		public string	Formfactor			{ get; set; }
+		public ICollection<BodyFormfactor> Formfactor { get; set; }
+		//[Required]
+		//public string	Formfactor			{ get; set; }
 		[Required]
 		public string	Type				{ get; set; }
 		[Required]
@@ -37,22 +38,22 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		[Column("USB3.0Amount")]
 		public int		USB3Amount			{ get; set; }
 		[Required]
-		public int		VideocardMaxLength	{ get; set; }
+		public double		VideocardMaxLength	{ get; set; }
 		public string	Additions			{ get; set; }
 
 		public static implicit operator DATA.Body(Body body)
 		{
 			return new DATA.Body()
 			{
-				Additions = body.Additions,
+				Additions = body.Additions?.Trim(),
 				BuildInCharger = body.BuildInCharger,
 				ChargerPower = body.ChargerPower,
-				Color = body.Color,
-				Company = body.Company,
-				Formfactor = body.Formfactor,
+				Color = body.Color?.Trim(),
+				Company = body.Company?.Trim(),
+				Formfactor = body.Formfactor?.Select(e => e.Formfactor.Trim()).ToList(),
 				ID = body.ID,
-				Title = body.Title,
-				Type = body.Type,
+				Title = body.Title?.Trim(),
+				Type = body.Type?.Trim(),
 				USB2Amount = body.USB2Amount,
 				USB3Amount = body.USB3Amount,
 				VideocardMaxLength = body.VideocardMaxLength
@@ -61,14 +62,13 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 
 		public static implicit operator Body(DATA.Body body)
 		{
-			return new Body()
+			var e = new Body()
 			{
 				Additions = body.Additions,
 				BuildInCharger = body.BuildInCharger,
 				ChargerPower = body.ChargerPower,
 				Color = body.Color,
 				Company = body.Company,
-				Formfactor = body.Formfactor,
 				ID = body.ID,
 				Title = body.Title,
 				Type = body.Type,
@@ -76,6 +76,9 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				USB3Amount = body.USB3Amount,
 				VideocardMaxLength = body.VideocardMaxLength
 			};
+
+			e.Formfactor = body.Formfactor?.Select(f => new BodyFormfactor() { Body = e, Formfactor = f }).ToList();
+			return e;
 		}
 
 		public void CopyParameters(Body body)

@@ -14,18 +14,38 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ComputerComplectorWebAPI.Services
 {
+	/// <summary>
+	/// Users authentication service
+	/// </summary>
 	public class UserService : IUserService
 	{
+		/// <summary>
+		/// Users data context
+		/// </summary>
 		private UsersContext _dbContext;
 
+		/// <summary>
+		/// Application settings
+		/// </summary>
 		private readonly AppSettings _appSettings;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context">User-data context</param>
+		/// <param name="appSettings">Application settings</param>
 		public UserService(UsersContext context, IOptions<AppSettings> appSettings)
 		{
 			_dbContext = context;
 			_appSettings = appSettings.Value;
 		}
 
+		/// <summary>
+		/// Authenticate user with given username and password
+		/// </summary>
+		/// <param name="username">Username</param>
+		/// <param name="password">Password</param>
+		/// <returns>Authorized <see cref="User"/> or null</returns>
 		public User Authenticate(string username, string password)
 		{
 			var users = _dbContext.Users.ToList();
@@ -58,11 +78,20 @@ namespace ComputerComplectorWebAPI.Services
 			return user;
 		}
 
+		/// <summary>
+		/// Get all user records
+		/// </summary>
+		/// <returns><see cref="IEnumerable{User}"/> of <see cref="User"/></returns>
 		public IEnumerable<User> GetAll()
 		{
 			return _dbContext.Users.ToList().Select(e => { e.Password = null; return e; });
 		}
 
+		/// <summary>
+		/// Get user record by ID
+		/// </summary>
+		/// <param name="id">Record ID</param>
+		/// <returns><see cref="User"/> with given ID or null</returns>
 		public User GetById(int id)
 		{
 			var user = _dbContext.Users.ToList().FirstOrDefault(e => e.ID == id);

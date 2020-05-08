@@ -208,7 +208,7 @@ namespace ComputerComplectorWebAPI.Models.Requests.Get
             }
 
             SelectedBody = selectedBody;
-            if (SelectedCooler != null)
+            if (SelectedBody != null)
             {
                 cond.Add("Formfactor = (SELECT Formfactor FROM BODY WHERE ID = @bodyID)");
                 Parameters.Add(new SqlParameter("@bodyID", SelectedBody));

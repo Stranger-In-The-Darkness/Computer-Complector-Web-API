@@ -32,7 +32,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		[Required]
 		public string       Family					{ get; set; }
 		[Required]
-		public string       Length					{ get; set; }
+		public double       Length					{ get; set; }
 		[Required]
 		public string       Pin						{ get; set; }
 
@@ -40,17 +40,17 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.Videocard()
 			{
-				Company = videocard.Company,
+				Company = videocard.Company?.Trim(),
 				ID = videocard.ID,
-				Title = videocard.Title,
+				Title = videocard.Title?.Trim(),
 				Capacity = videocard.Capacity,
-				Connectors = videocard.Connectors.Select(e => e.Connector).ToList(),
-				Family = videocard.Family,
+				Connectors = videocard.Connectors?.Select(e => e.Connector.Trim()).ToList(),
+				Family = videocard.Family?.Trim(),
 				Length = videocard.Length,
-				Memory = videocard.Memory,
-				Pin = videocard.Pin,
-				Proccessor = videocard.GraphicalProccessor,
-				Series = videocard.Series,
+				Memory = videocard.Memory?.Trim(),
+				Pin = videocard.Pin?.Trim(),
+				Proccessor = videocard.GraphicalProccessor?.Trim(),
+				Series = videocard.Series?.Trim(),
 				VRAM = videocard.VRAM
 			};
 		}
@@ -71,7 +71,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				Series = videocard.Series,
 				VRAM = videocard.VRAM
 			};
-			el.Connectors = videocard.Connectors.Select(e => new VideocardConnector() { Videocard = el, Connector = e }).ToList();
+			el.Connectors = videocard.Connectors?.Select(e => new VideocardConnector() { Videocard = el, Connector = e }).ToList();
 			return el;
 		}
 

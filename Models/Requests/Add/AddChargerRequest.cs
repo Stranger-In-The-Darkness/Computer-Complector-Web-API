@@ -7,11 +7,25 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddChargerRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.Charger"/> to the DB
+	/// </summary>
+	public class AddChargerRequest : AddRequestBase
     {
+		/// <summary>
+		/// Element to be added
+		/// </summary>
         private Charger _element;
+
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
         private List<SqlParameter> _parameters;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
         public AddChargerRequest(Charger element)
         {
             _element = element;
@@ -66,10 +80,19 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
         public string Expression { get; private set; } = "INSERT INTO CHARGER VALUES (@title, @company, @series, @power, @sertificate, @videoConnAmount, @videocardPin, @sata, @ide, @motherboardPin, @connector);";
 
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
         public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public Charger Charger { get => _element; }
     }
 }

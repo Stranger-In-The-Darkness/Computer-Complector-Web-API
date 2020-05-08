@@ -7,12 +7,26 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddHddRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.HDD"/> to the DB
+	/// </summary>
+	public class AddHddRequest : AddRequestBase
     {
-        private HDD _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private HDD _element;
 
-        public AddHddRequest(HDD element)
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
+		public AddHddRequest(HDD element)
         {
             _element = element;
 
@@ -58,11 +72,20 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } = 
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } = 
             "INSERT INTO HDD VALUES (@title, @company, @formfactor, @volume, @buffer, @speed, @series);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public HDD HDD { get => _element; }
     }
 }

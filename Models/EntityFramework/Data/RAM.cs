@@ -32,15 +32,15 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.RAM()
 			{
-				Company = ram.Company,
+				Company = ram.Company?.Trim(),
 				ID = ram.ID,
-				Purpose = ram.Purpose,
-				Title = ram.Title,
-				CL = ram.CASLatency,
+				Purpose = ram.Purpose?.Trim(),
+				Title = ram.Title?.Trim(),
+				CL = ram.CASLatency?.Trim(),
 				Freq = ram.Frequency,
-				MemoryType = ram.MemoryType,
+				MemoryType = ram.MemoryType?.Trim(),
 				ModuleAmount = ram.ModulesAmount,
-				Series = ram.Series,
+				Series = ram.Series?.Trim(),
 				Volume = ram.MemoryVolume
 			};
 		}

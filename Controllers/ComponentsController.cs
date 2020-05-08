@@ -16,122 +16,173 @@ using ComputerComplectorWebAPI.Models.Requests.Get;
 using ComputerComplectorWebAPI.Models.Requests.Add;
 using ComputerComplectorWebAPI.Models.Requests.Update;
 using ComputerComplectorWebAPI.Models.Requests.Remove;
+using Microsoft.Extensions.Logging;
+
+using Newtonsoft.Json;
 
 namespace ComputerComplectorWebAPI.Controllers
 {
-    /// <summary>
-    /// Components service user controller
-    /// </summary>
-    [Route("api/[controller]")]
+	/// <summary>
+	/// Components service user controller
+	/// </summary>
+	[Route("api/[controller]")]
     [ApiController]
     public class ComponentsController : Controller
     {
+		/// <summary>
+		/// Components DB service
+		/// </summary>
         private IComponentsServiceAsync _componentService;
+
+		/// <summary>
+		/// Localization service
+		/// </summary>
         private IStringLocalizer<ComponentsController> _localizer;
 
-        public ComponentsController(IComponentsServiceAsync componentService, IStringLocalizer<ComponentsController> localizer)
+		/// <summary>
+		/// Logger
+		/// </summary>
+		private ILogger<ComponentsController> _logger;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="componentService">Components service</param>
+		/// <param name="localizer">Localizer</param>
+		/// <param name="logger">Logger</param>
+        public ComponentsController(IComponentsServiceAsync componentService, IStringLocalizer<ComponentsController> localizer, ILogger<ComponentsController> logger)
         {
             _componentService = componentService;
             _localizer = localizer;
+			_logger = logger;
         }
 
-        #region GET
-        #region PROPERTIES
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>JSON on keyword and it description</returns>
-        [HttpGet, Route("body/properties")]
+		#region GET
+		#region PROPERTIES
+
+		/// <summary>
+		/// Get <see cref="Body"/> properties
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("body/properties")]
         public async Task<string> GetBodyProperties()
         {
-            return await Task.Run(() => { return _localizer["body"].Value; });
+			var list = await _componentService.GetProperties("body");
+			return FormatProperties(list);
+            //return await Task.Run(() => { return _localizer["body"].Value; });
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("charger/properties")]
+		/// <summary>
+		/// Get <see cref="Charger"/> properties
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("charger/properties")]
         public async Task<string> GetChargerProperties()
         {
-            return await Task.Run(() => { return _localizer["charger"].Value; });
-        }
+			var list = await _componentService.GetProperties("charger");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["charger"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("cooler/properties")]
+		/// <summary>
+		/// Get localized <see cref="Cooler"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("cooler/properties")]
         public async Task<string> GetCoolerProperties()
         {
-            return await Task.Run(() => { return _localizer["cooler"].Value; });
-        }
+			var list = await _componentService.GetProperties("cooler");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["cooler"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("cpu/properties")]
+		/// <summary>
+		/// Get localized <see cref="CPU"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("cpu/properties")]
         public async Task<string> GetCPUProperties()
         {
-            return await Task.Run(() => { return _localizer["cpu"].Value; });
-        }
+			var list = await _componentService.GetProperties("cpu");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["cpu"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("hdd/properties")]
+		/// <summary>
+		/// Get localized <see cref="HDD"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("hdd/properties")]
         public async Task<string> GetHDDProperties()
         {
-            return await Task.Run(() => { return _localizer["hdd"].Value; });
-        }
+			var list = await _componentService.GetProperties("hdd");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["hdd"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("motherboard/properties")]
+		/// <summary>
+		/// Get localized <see cref="Motherboard"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("motherboard/properties")]
         public async Task<string> GetMotherboardProperties()
         {
-            return await Task.Run(() => { return _localizer["motherboard"].Value; });
-        }
+			var list = await _componentService.GetProperties("motherboard");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["motherboard"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("ram/properties")]
+		/// <summary>
+		/// Get localized <see cref="RAM"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("ram/properties")]
         public async Task<string> GetRAMProperties()
         {
-            return await Task.Run(() => { return _localizer["ram"].Value; });
-        }
+			var list = await _componentService.GetProperties("ram");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["ram"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("ssd/properties")]
+		/// <summary>
+		/// Get localized <see cref="SSD"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("ssd/properties")]
         public async Task<string> GetSSDProperties()
         {
-            return await Task.Run(() => { return _localizer["ssd"].Value; });
-        }
+			var list = await _componentService.GetProperties("ssd");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["ssd"].Value; });
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Dictionary of properties? their description and options</returns>
-        [HttpGet, Route("videocard/properties")]
+		/// <summary>
+		/// Get localized <see cref="Videocard"/> properties from <see cref="IStringLocalizer{ComponentsController}"/>
+		/// </summary>
+		/// <returns>Dictionary of properties, their description and options</returns>
+		[HttpGet, Route("videocard/properties")]
         public async Task<string> GetVideocardProperties()
         {
-            return await Task.Run(() => { return _localizer["videocard"].Value; });
-        }
+			var list = await _componentService.GetProperties("videocard");
+			return FormatProperties(list);
+			//return await Task.Run(() => { return _localizer["videocard"].Value; });
+		}
+
+		private string FormatProperties(IEnumerable<Property> list)
+		{
+			var res = list.ToDictionary(e => e.Name, e => new { text = e.Text, addition = e.ShowDescription, additionText = e.Description, values = e.Values });
+
+			var json = JsonConvert.SerializeObject(res);
+
+			return json;
+		}
+
         #endregion
 
         /// <summary>
         /// Get all records
         /// </summary>
-        /// <returns>IEnumerable of Body objects</returns>
+        /// <returns><see cref="IEnumerable{Body}"/> of <see cref="Body"/> objects</returns>
         // GET api/components/bodies
         [HttpGet, Route("bodies")]
         public async Task<IEnumerable<Body>> GetAllBodies()
@@ -139,21 +190,21 @@ namespace ComputerComplectorWebAPI.Controllers
             return await _componentService.GetBodies();
         }
 
-        /// <summary>
-        /// Get all records that apply
-        /// </summary>
-        /// <param name="company">Vendor</param>
-        /// <param name="formfactor">Formfactor</param>
-        /// <param name="type">Type</param>
-        /// <param name="buildInCharger">Charger included</param>
-        /// <param name="chargerPower">Charger power</param>
-        /// <param name="color">Color</param>
-        /// <param name="usbPorts">USB ports amount</param>
-        /// <param name="selectedMotherboard">Selected motherboard ID</param>
-        /// <param name="selectedVideocard">Selected videocard ID</param>
-        /// <returns></returns>
-        // GET api/components/body
-        [HttpGet, Route("body")]
+		/// <summary>
+		/// Get all records that apply
+		/// </summary>
+		/// <param name="company">Vendor</param>
+		/// <param name="formfactor">Formfactor</param>
+		/// <param name="type">Type</param>
+		/// <param name="buildInCharger">Charger included</param>
+		/// <param name="chargerPower">Charger power</param>
+		/// <param name="color">Color</param>
+		/// <param name="usbPorts">USB ports amount</param>
+		/// <param name="selectedMotherboard">Selected motherboard ID</param>
+		/// <param name="selectedVideocard">Selected videocard ID</param>
+		/// <returns><see cref="IEnumerable{Body}"/> of <see cref="Body"/> objects</returns>
+		// GET api/components/body
+		[HttpGet, Route("body")]
         public async Task<IEnumerable<Body>> GetBodies(
             [FromQuery(Name = "company")] string[] company,
             [FromQuery(Name = "formfactor")] string[] formfactor,
@@ -172,7 +223,7 @@ namespace ComputerComplectorWebAPI.Controllers
         /// <summary>
         /// Get all records
         /// </summary>
-        /// <returns>IEnumerable of Charger objects</returns>
+        /// <returns><see cref="IEnumerable{Charger}"/> of <see cref="Charger"/> objects</returns>
         // GET api/components/chargers
         [HttpGet, Route("chargers")]
         public async Task<IEnumerable<Charger>> GetAllChargers()
@@ -180,23 +231,23 @@ namespace ComputerComplectorWebAPI.Controllers
             return await _componentService.GetChargers();
         }
 
-        /// <summary>
-        /// Get all records that apply
-        /// </summary>
-        /// <param name="company">Vendor</param>
-        /// <param name="series">Series</param>
-        /// <param name="power">Power</param>
-        /// <param name="sertificate">Sertificate 80 Plus</param>
-        /// <param name="videoConnectorsCount">Amount of video connectors</param>
-        /// <param name="connectorType">Charger connector</param>
-        /// <param name="sataCount">Amount of SATA connectors</param>
-        /// <param name="ideCount">Amount of IDE connectors</param>
-        /// <param name="motherboardConnector">Motherboard connector</param>
-        /// <param name="selectedMotherboard">Selected motherboard ID</param>
-        /// <param name="selectedVideocard">Selected videocard ID</param>
-        /// <returns></returns>
-        // GET api/components/charger
-        [HttpGet, Route("charger")]
+		/// <summary>
+		/// Get all records that apply
+		/// </summary>
+		/// <param name="company">Vendor</param>
+		/// <param name="series">Series</param>
+		/// <param name="power">Power</param>
+		/// <param name="sertificate">Sertificate 80 Plus</param>
+		/// <param name="videoConnectorsCount">Amount of video connectors</param>
+		/// <param name="connectorType">Charger connector</param>
+		/// <param name="sataCount">Amount of SATA connectors</param>
+		/// <param name="ideCount">Amount of IDE connectors</param>
+		/// <param name="motherboardConnector">Motherboard connector</param>
+		/// <param name="selectedMotherboard">Selected motherboard ID</param>
+		/// <param name="selectedVideocard">Selected videocard ID</param>
+		/// <returns><see cref="IEnumerable{Charger}"/> of <see cref="Charger"/> objects</returns>
+		// GET api/components/charger
+		[HttpGet, Route("charger")]
         public async Task<IEnumerable<Charger>> GetChargers(
             [FromQuery(Name = "company")] string[] company,
             [FromQuery(Name = "series")] string[] series,
@@ -217,7 +268,7 @@ namespace ComputerComplectorWebAPI.Controllers
         /// <summary>
         /// Get all records
         /// </summary>
-        /// <returns>IEnumerable of Cooler objects</returns>
+        /// <returns><see cref="IEnumerable{Cooler}"/> of <see cref="Cooler"/> objects</returns>
         // GET api/components/coolers
         [HttpGet, Route("coolers")]
         public async Task<IEnumerable<Cooler>> GetAllCoolers()
@@ -618,6 +669,12 @@ namespace ComputerComplectorWebAPI.Controllers
         {
             return await _componentService.GetVideocard(id);
         }
+
+		[HttpGet("{component}/description")]
+		public IDictionary<string, string> GetComponentDescription(string component)
+		{
+			return _componentService.GetDescription(component);
+		}
 		#endregion
 
 		#region POST
@@ -747,6 +804,88 @@ namespace ComputerComplectorWebAPI.Controllers
                 throw new UnauthorizedAccessException("Only admin can make changes. Have a nice day and fuck off ;)");
             }
         }
+
+		[HttpPost("body/properties")]
+		public async Task<string> PostBodyProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("body", dict);
+
+			return await GetBodyProperties();
+		}
+
+		[HttpPost("charger/properties")]
+		public async Task<string> PostChargerProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("charger", dict);
+
+			return await GetChargerProperties();
+		}
+
+		[HttpPost("cooler/properties")]
+		public async Task<string> PostCoolerProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("cooler", dict);
+
+			return await GetCoolerProperties();
+		}
+
+		[HttpPost("cpu/properties")]
+		public async Task<string> PostCPUProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("cpu", dict);
+
+			return await GetCPUProperties();
+		}
+
+		[HttpPost("hdd/properties")]
+		public async Task<string> PostHDDProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("hdd", dict);
+
+			return await GetHDDProperties();
+		}
+
+		[HttpPost("motherboard/properties")]
+		public async Task<string> PostMotherboardProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("motherboard", dict);
+
+			return await GetMotherboardProperties();
+		}
+
+		[HttpPost("ram/properties")]
+		public async Task<string> PostRAMProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("ram", dict);
+
+			return await GetRAMProperties();
+		}
+
+		[HttpPost("ssd/properties")]
+		public async Task<string> PostSSDProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("ssd", dict);
+
+			return await GetSSDProperties();
+		}
+
+		[HttpPost("videocard/properties")]
+		public async Task<string> PostVideocardProperties([FromBody]Dictionary<string, Property> dict)
+		{
+			await PostProperties("videocard", dict);
+
+			return await GetVideocardProperties();
+		}
+
+		private async Task PostProperties(string component, Dictionary<string, Property> dict)
+		{
+			foreach (var kv in dict)
+			{
+				kv.Value.Name = kv.Key;
+				kv.Value.Component = component;
+				await _componentService.AddProperty(component, kv.Value);
+			}
+		}
 		#endregion
 
 		#region PUT
@@ -944,6 +1083,11 @@ namespace ComputerComplectorWebAPI.Controllers
 			return await _componentService.RemoveSSD(new RemoveSSDRequest(id));
 		}
 
+		/// <summary>
+		/// Delete <see cref="Videocard"/> with specified ID
+		/// </summary>
+		/// <param name="id">Record ID</param>
+		/// <returns>Updated <see cref="IEnumerable{Videocard}"/> of <see cref="Videocard"/></returns>
 		[Authorize(Roles = "ADMIN")]
 		[HttpDelete("videocard/{id}")]
         public async Task<IEnumerable<Videocard>> DeleteVideocard(int id)

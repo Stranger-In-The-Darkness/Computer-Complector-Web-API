@@ -21,6 +21,7 @@ namespace ComputerComplectorWebAPI.Services
     /// <summary>
     /// Asynchronous User component service
     /// </summary>
+	/// <remarks>Uses SqlConnection</remarks>
     public class ComponentsServiceAsync : IComponentsServiceAsync
     {
         private IUtilityAsync _utility;
@@ -48,11 +49,10 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM BODY WHERE ID = @id";
 
-            Body element = null;
 
-            SqlParameter param = new SqlParameter("@id", id);
+			SqlParameter param = new SqlParameter("@id", id);
 
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out Body element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -63,7 +63,6 @@ namespace ComputerComplectorWebAPI.Services
                         ID = (int)reader["ID"],
                         Title = reader["Title"].ToString().Trim(),
                         Company = reader["Company"].ToString().Trim(),
-                        Formfactor = reader["Formfactor"].ToString().Trim(),
                         Type = reader["Type"].ToString().Trim(),
                         BuildInCharger = (bool)reader["Build-inCharger"],
                         ChargerPower = (int)reader["ChargerPower"],
@@ -95,11 +94,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM CHARGER b WHERE b.ID = @id";
 
-            Charger element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out Charger element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -142,11 +139,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM COOLER b JOIN COOLER_SOCKET cs ON b.ID = cs.CoolerID WHERE b.ID = @id";
 
-            Cooler element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out Cooler element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -192,11 +187,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM CPU b WHERE b.ID = @id";
 
-            CPU element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out CPU element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -240,11 +233,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM HDD b JOIN HDD_INTERFACE hd on b.ID = hd.HDDID WHERE b.ID = @id";
 
-            HDD element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out HDD element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -289,11 +280,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM MOTHERBOARD b JOIN MOTHERBOARD_SLOTS ms on b.ID = ms.MotherboardID WHERE b.ID = @id";
 
-            Motherboard element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out Motherboard element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -345,11 +334,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM RAM b WHERE b.ID = @id";
 
-            RAM element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out RAM element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -391,11 +378,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM SSD b JOIN SSD_INTERFACE si on b.ID = si.SSDID WHERE b.ID = @id";
 
-            SSD element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out SSD element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -439,11 +424,9 @@ namespace ComputerComplectorWebAPI.Services
             }
             string expression = "SELECT * FROM VIDEOCARD b JOIN VIDEOCARD_CONNECTOR vc on b.ID = vc.VideocardID WHERE b.ID = @id";
 
-            Videocard element = null;
+			SqlParameter param = new SqlParameter("@id", id);
 
-            SqlParameter param = new SqlParameter("@id", id);
-
-            if (!_cache.TryGetValue((expression, id), out element))
+			if (!_cache.TryGetValue((expression, id), out Videocard element))
             {
                 var reader = await Task.Run(() => _utility.ExecuteReader(expression, param));
 
@@ -461,7 +444,7 @@ namespace ComputerComplectorWebAPI.Services
                         Capacity = (int)reader["Capacity"],
                         Family = reader["Family"].ToString().Trim(),
                         Connectors = new List<string>() { reader["Connector"].ToString().Trim() },
-                        Length = reader["Size"].ToString().Trim(),
+                        //Length = reader["Size"].ToString().Trim(),
                         Pin = reader["Pin"].ToString().Trim()
                     };
                 }
@@ -491,44 +474,41 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM BODY";
 
-            List<Body> bodies;
+			if (!_cache.TryGetValue(expression, out List<Body> bodies))
+			{
+				bodies = new List<Body>();
 
-            if (!_cache.TryGetValue(expression, out bodies))
-            {
-                bodies = new List<Body>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(expression));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(expression));
+				while (reader.Read())
+				{
+					bodies.Add(
+						new Body()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Type = reader["Type"].ToString().Trim(),
+							BuildInCharger = (bool)reader["Build-inCharger"],
+							ChargerPower = (int)reader["ChargerPower"],
+							Color = reader["Color"].ToString().Trim(),
+							USB2Amount = (int)reader["USB2.0Amount"],
+							USB3Amount = (int)reader["USB3.0Amount"],
+							Additions = reader["Additions"].ToString().Trim(),
+							VideocardMaxLength = (int)reader["VideocardMaxLength"]
+						}
+					);
+				}
 
-                while (reader.Read())
-                {
-                    bodies.Add(
-                        new Body()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Formfactor = reader["Formfactor"].ToString().Trim(),
-                            Type = reader["Type"].ToString().Trim(),
-                            BuildInCharger = (bool)reader["Build-inCharger"],
-                            ChargerPower = (int)reader["ChargerPower"],
-                            Color = reader["Color"].ToString().Trim(),
-                            USB2Amount = (int)reader["USB2.0Amount"],
-                            USB3Amount = (int)reader["USB3.0Amount"],
-                            Additions = reader["Additions"].ToString().Trim(),
-                            VideocardMaxLength = (int)reader["VideocardMaxLength"]
-                        }
-                    );
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(
+					expression,
+					bodies,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(
-                    expression,
-                    bodies,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return bodies;
+			return bodies;
         }
 
         /// <summary>
@@ -539,40 +519,38 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM CHARGER";
 
-            List<Charger> chargers;
+			if (!_cache.TryGetValue(expression, out List<Charger> chargers))
+			{
+				chargers = new List<Charger>();
 
-            if (!_cache.TryGetValue(expression, out chargers))
-            {
-                chargers = new List<Charger>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(expression));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(expression));
+				while (reader.Read())
+				{
+					chargers.Add(
+						new Charger()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Series = reader["Series"].ToString().Trim(),
+							Power = (int)reader["Power"],
+							Sertificate80Plus = reader["Sertificate80Plus"].ToString().Trim(),
+							VideoConnectorsAmount = (int)reader["VideoConnectorsAmount"],
+							ConnectorType = reader["ConnectorType"].ToString().Trim(),
+							SATAAmount = (int)reader["SATAAmount"],
+							IDEAmount = (int)reader["IDEAmount"],
+							MotherboardConnector = reader["MotherboardConnector"].ToString().Trim()
+						}
+					);
+				}
 
-                while (reader.Read())
-                {
-                    chargers.Add(
-                        new Charger()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Series = reader["Series"].ToString().Trim(),
-                            Power = (int)reader["Power"],
-                            Sertificate80Plus = reader["Sertificate80Plus"].ToString().Trim(),
-                            VideoConnectorsAmount = (int)reader["VideoConnectorsAmount"],
-                            ConnectorType = reader["ConnectorType"].ToString().Trim(),
-                            SATAAmount = (int)reader["SATAAmount"],
-                            IDEAmount = (int)reader["IDEAmount"],
-                            MotherboardConnector = reader["MotherboardConnector"].ToString().Trim()
-                        }
-                    );
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(expression, chargers, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(expression, chargers, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return chargers;
+			return chargers;
         }
 
         /// <summary>
@@ -583,49 +561,47 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM COOLER c JOIN COOLER_SOCKET cs on c.ID = cs.CoolerID";
 
-            List<Cooler> coolers;
+			if (!_cache.TryGetValue(expression, out List<Cooler> coolers))
+			{
+				coolers = new List<Cooler>();
 
-            if (!_cache.TryGetValue(expression, out coolers))
-            {
-                coolers = new List<Cooler>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(expression));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(expression));
+				while (reader.Read())
+				{
+					if (coolers.Count == 0 || (coolers.Count > 0 && coolers.Last().ID != (int)reader["ID"]))
+					{
+						var element = new Cooler()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Purpose = reader["Purpose"].ToString().Trim(),
+							Type = reader["Type"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Material = reader["Material"].ToString().Trim(),
+							VentDiam = reader["Diameter"] is DBNull ? null : (double?)reader["Diameter"],
+							TurnAdj = reader["Adjustement"] is DBNull ? null : (bool?)reader["Adjustement"],
+							Color = reader["Color"].ToString().Trim(),
+							Socket = new List<string>() { reader["Socket"].ToString().Trim() }
+						};
 
-                while (reader.Read())
-                {
-                    if (coolers.Count == 0 || (coolers.Count > 0 && coolers.Last().ID != (int)reader["ID"]))
-                    {
-                        var element = new Cooler()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Purpose = reader["Purpose"].ToString().Trim(),
-                            Type = reader["Type"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Material = reader["Material"].ToString().Trim(),
-                            VentDiam = reader["Diameter"] is DBNull ? null : (double?)reader["Diameter"],
-                            TurnAdj = reader["Adjustement"] is DBNull ? null : (bool?)reader["Adjustement"],
-                            Color = reader["Color"].ToString().Trim(),
-                            Socket = new List<string>() { reader["Socket"].ToString().Trim() }
-                        };
+						coolers.Add(element);
+					}
+					else if (coolers.Count > 0)
+					{
+						coolers.Last().Socket.Add(reader["Socket"].ToString().Trim());
+					}
+				}
 
-                        coolers.Add(element);
-                    }
-                    else if (coolers.Count > 0)
-                    {
-                        coolers.Last().Socket.Add(reader["Socket"].ToString().Trim());
-                    }
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(
+					expression,
+					coolers,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(
-                    expression,
-                    coolers,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return coolers;
+			return coolers;
         }
 
         /// <summary>
@@ -636,44 +612,42 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM CPU";
 
-            List<CPU> cpus;
+			if (!_cache.TryGetValue(expression, out List<CPU> cpus))
+			{
+				cpus = new List<CPU>();
 
-            if (!_cache.TryGetValue(expression, out cpus))
-            {
-                cpus = new List<CPU>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(expression));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(expression));
+				while (reader.Read())
+				{
+					cpus.Add(
+						new CPU()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Series = reader["Series"].ToString().Trim(),
+							Socket = reader["Socket"].ToString().Trim(),
+							Frequency = (double)reader["Frequency"],
+							CoresAmount = (int)reader["AmountOfCores"],
+							ThreadsAmount = (int)reader["AmountOfThreads"],
+							IntegratedGraphics = (bool)reader["IntegratedGraphics"],
+							Core = reader["Core"].ToString().Trim(),
+							DeliveryType = reader["DeliveryType"].ToString().Trim(),
+							Overcloacking = (bool)reader["Overclocking"]
+						}
+					);
+				}
 
-                while (reader.Read())
-                {
-                    cpus.Add(
-                        new CPU()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Series = reader["Series"].ToString().Trim(),
-                            Socket = reader["Socket"].ToString().Trim(),
-                            Frequency = (double)reader["Frequency"],
-                            CoresAmount = (int)reader["AmountOfCores"],
-                            ThreadsAmount = (int)reader["AmountOfThreads"],
-                            IntegratedGraphics = (bool)reader["IntegratedGraphics"],
-                            Core = reader["Core"].ToString().Trim(),
-                            DeliveryType = reader["DeliveryType"].ToString().Trim(),
-                            Overcloacking = (bool)reader["Overclocking"]
-                        }
-                    );
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(
+					expression,
+					cpus,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(
-                    expression,
-                    cpus,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return cpus;
+			return cpus;
         }
 
         /// <summary>
@@ -684,46 +658,45 @@ namespace ComputerComplectorWebAPI.Services
         {
             string expression = "SELECT * FROM HDD h JOIN HDD_INTERFACE hd on h.ID = hd.HDDID";
 
-            List<HDD> hdds;
 
-            if (!_cache.TryGetValue(expression, out hdds))
-            {
-                hdds = new List<HDD>();
+			if (!_cache.TryGetValue(expression, out List<HDD> hdds))
+			{
+				hdds = new List<HDD>();
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(expression));
+				var reader = await Task.Run(() => _utility.ExecuteReader(expression));
 
-                while (reader.Read())
-                {
-                    if (hdds.Count == 0 || (hdds.Count > 0 && hdds.Last().ID != (int)reader["ID"]))
-                    {
-                        var element = new HDD()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Formfactor = reader["Formfactor"].ToString().Trim(),
-                            Capacity = (int)reader["Volume"],
-                            BufferVolume = (int)reader["BufferVolume"],
-                            Speed = (int)reader["Speed"],
-                            Interface = new List<string>() { reader["Interface"].ToString().Trim() }
-                        };
-                        hdds.Add(element);
-                    }
-                    else if (hdds.Count > 0)
-                    {
-                        hdds.Last().Interface.Add(reader["Interface"].ToString().Trim());
-                    }
-                }
+				while (reader.Read())
+				{
+					if (hdds.Count == 0 || (hdds.Count > 0 && hdds.Last().ID != (int)reader["ID"]))
+					{
+						var element = new HDD()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Formfactor = reader["Formfactor"].ToString().Trim(),
+							Capacity = (int)reader["Volume"],
+							BufferVolume = (int)reader["BufferVolume"],
+							Speed = (int)reader["Speed"],
+							Interface = new List<string>() { reader["Interface"].ToString().Trim() }
+						};
+						hdds.Add(element);
+					}
+					else if (hdds.Count > 0)
+					{
+						hdds.Last().Interface.Add(reader["Interface"].ToString().Trim());
+					}
+				}
 
-                reader.Close();
+				reader.Close();
 
-                _cache.Set(
-                    expression,
-                    hdds,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
+				_cache.Set(
+					expression,
+					hdds,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-            return hdds;
+			return hdds;
         }
 
         /// <summary>
@@ -913,7 +886,7 @@ namespace ComputerComplectorWebAPI.Services
                             Capacity = (int)reader["Capacity"],
                             Family = reader["Family"].ToString().Trim(),
                             Connectors = new List<string>() { reader["Connector"].ToString().Trim() },
-                            Length = reader["Length"].ToString().Trim(),
+                            //Length = reader["Length"].ToString().Trim(),
                             Pin = reader["Pin"].ToString().Trim()
                         };
 
@@ -945,44 +918,41 @@ namespace ComputerComplectorWebAPI.Services
                 return await GetBodies();
             }
 
-            List<Body> bodies;
+			if (!_cache.TryGetValue((request.Expression, request.Parameters), out List<Body> bodies))
+			{
+				bodies = new List<Body>();
 
-            if (!_cache.TryGetValue((request.Expression, request.Parameters), out bodies))
-            {
-                bodies = new List<Body>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
+				while (reader.Read())
+				{
+					bodies.Add(
+						new Body()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Type = reader["Type"].ToString().Trim(),
+							BuildInCharger = (bool)reader["Build-inCharger"],
+							ChargerPower = (int)reader["ChargerPower"],
+							Color = reader["Color"].ToString().Trim(),
+							USB2Amount = (int)reader["USB2.0Amount"],
+							USB3Amount = (int)reader["USB3.0Amount"],
+							Additions = reader["Additions"].ToString().Trim(),
+							VideocardMaxLength = (int)reader["VideocardMaxLength"]
+						}
+					);
+				}
 
-                while (reader.Read())
-                {
-                    bodies.Add(
-                        new Body()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Formfactor = reader["Formfactor"].ToString().Trim(),
-                            Type = reader["Type"].ToString().Trim(),
-                            BuildInCharger = (bool)reader["Build-inCharger"],
-                            ChargerPower = (int)reader["ChargerPower"],
-                            Color = reader["Color"].ToString().Trim(),
-                            USB2Amount = (int)reader["USB2.0Amount"],
-                            USB3Amount = (int)reader["USB3.0Amount"],
-                            Additions = reader["Additions"].ToString().Trim(),
-                            VideocardMaxLength = (int)reader["VideocardMaxLength"]
-                        }
-                    );
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(
+					(request.Expression, request.Parameters),
+					bodies,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(
-                    (request.Expression, request.Parameters),
-                    bodies,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return bodies;
+			return bodies;
         }
 
         /// <summary>
@@ -997,43 +967,41 @@ namespace ComputerComplectorWebAPI.Services
                 return await GetChargers();
             }
 
-            List<Charger> chargers;
+			if (!_cache.TryGetValue((request.Expression, request.Parameters), out List<Charger> chargers))
+			{
+				chargers = new List<Charger>();
 
-            if (!_cache.TryGetValue((request.Expression, request.Parameters), out chargers))
-            {
-                chargers = new List<Charger>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
+				while (reader.Read())
+				{
+					chargers.Add(
+						new Charger()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Series = reader["Series"].ToString().Trim(),
+							Power = (int)reader["Power"],
+							Sertificate80Plus = reader["Sertificate80Plus"].ToString().Trim(),
+							VideoConnectorsAmount = (int)reader["VideoConnectorsAmount"],
+							ConnectorType = reader["ConnectorType"].ToString().Trim(),
+							SATAAmount = (int)reader["SATAAmount"],
+							IDEAmount = (int)reader["IDEAmount"],
+							MotherboardConnector = reader["MotherboardConnector"].ToString().Trim()
+						}
+					);
+				}
 
-                while (reader.Read())
-                {
-                    chargers.Add(
-                        new Charger()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Series = reader["Series"].ToString().Trim(),
-                            Power = (int)reader["Power"],
-                            Sertificate80Plus = reader["Sertificate80Plus"].ToString().Trim(),
-                            VideoConnectorsAmount = (int)reader["VideoConnectorsAmount"],
-                            ConnectorType = reader["ConnectorType"].ToString().Trim(),
-                            SATAAmount = (int)reader["SATAAmount"],
-                            IDEAmount = (int)reader["IDEAmount"],
-                            MotherboardConnector = reader["MotherboardConnector"].ToString().Trim()
-                        }
-                    );
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(
+					(request.Expression, request.Parameters),
+					chargers,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(
-                    (request.Expression, request.Parameters),
-                    chargers,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return chargers;
+			return chargers;
         }
 
         /// <summary>
@@ -1048,49 +1016,47 @@ namespace ComputerComplectorWebAPI.Services
                 return await GetCoolers();
             }
 
-            List<Cooler> coolers;
+			if (!_cache.TryGetValue((request.Expression, request.Parameters), out List<Cooler> coolers))
+			{
+				coolers = new List<Cooler>();
 
-            if (!_cache.TryGetValue((request.Expression, request.Parameters), out coolers))
-            {
-                coolers = new List<Cooler>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
+				while (reader.Read())
+				{
+					if (coolers.Count == 0 || (coolers.Count > 0 && coolers.Last().ID != (int)reader["ID"]))
+					{
+						var element = new Cooler()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Purpose = reader["Purpose"].ToString().Trim(),
+							Type = reader["Type"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Material = reader["Material"].ToString().Trim(),
+							VentDiam = reader["Diameter"] is DBNull ? null : (double?)reader["Diameter"],
+							TurnAdj = reader["Adjustement"] is DBNull ? null : (bool?)reader["Adjustement"],
+							Color = reader["Color"].ToString().Trim(),
+							Socket = new List<string>() { reader["Socket"].ToString().Trim() }
+						};
 
-                while (reader.Read())
-                {
-                    if (coolers.Count == 0 || (coolers.Count > 0 && coolers.Last().ID != (int)reader["ID"]))
-                    {
-                        var element = new Cooler()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Purpose = reader["Purpose"].ToString().Trim(),
-                            Type = reader["Type"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Material = reader["Material"].ToString().Trim(),
-                            VentDiam = reader["Diameter"] is DBNull ? null : (double?)reader["Diameter"],
-                            TurnAdj = reader["Adjustement"] is DBNull ? null : (bool?)reader["Adjustement"],
-                            Color = reader["Color"].ToString().Trim(),
-                            Socket = new List<string>() { reader["Socket"].ToString().Trim() }
-                        };
+						coolers.Add(element);
+					}
+					else if (coolers.Count > 0)
+					{
+						coolers.Last().Socket.Add(reader["Socket"].ToString().Trim());
+					}
+				}
 
-                        coolers.Add(element);
-                    }
-                    else if (coolers.Count > 0)
-                    {
-                        coolers.Last().Socket.Add(reader["Socket"].ToString().Trim());
-                    }
-                }
+				reader.Close();
 
-                reader.Close();
+				_cache.Set(
+					(request.Expression, request.Parameters),
+					coolers,
+					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+			}
 
-                _cache.Set(
-                    (request.Expression, request.Parameters),
-                    coolers,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-            }
-
-            return coolers;
+			return coolers;
         }
 
         /// <summary>
@@ -1105,47 +1071,45 @@ namespace ComputerComplectorWebAPI.Services
                 return await GetCPUs();
             }
 
-            List<CPU> cpus;
+			if (!_cache.TryGetValue((request.Expression, request.Parameters), out List<CPU> cpus))
+			{
+				cpus = new List<CPU>();
 
-            if (!_cache.TryGetValue((request.Expression, request.Parameters), out cpus))
-            {
-                cpus = new List<CPU>();
+				var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
 
-                var reader = await Task.Run(() => _utility.ExecuteReader(request.Expression, request.Parameters));
+				while (reader.Read())
+				{
+					cpus.Add(
+						new CPU()
+						{
+							ID = (int)reader["ID"],
+							Title = reader["Title"].ToString().Trim(),
+							Company = reader["Company"].ToString().Trim(),
+							Series = reader["Series"].ToString().Trim(),
+							Socket = reader["Socket"].ToString().Trim(),
+							Frequency = (int)reader["Frequency"],
+							CoresAmount = (int)reader["AmountOfCores"],
+							ThreadsAmount = (int)reader["AmountOfThreads"],
+							IntegratedGraphics = (bool)reader["IntegratedGraphics"],
+							Core = reader["Core"].ToString().Trim(),
+							DeliveryType = reader["DeliveryType"].ToString().Trim(),
+							Overcloacking = (bool)reader["Overclocking"]
+						}
+					);
+				}
 
-                while (reader.Read())
-                {
-                    cpus.Add(
-                        new CPU()
-                        {
-                            ID = (int)reader["ID"],
-                            Title = reader["Title"].ToString().Trim(),
-                            Company = reader["Company"].ToString().Trim(),
-                            Series = reader["Series"].ToString().Trim(),
-                            Socket = reader["Socket"].ToString().Trim(),
-                            Frequency = (int)reader["Frequency"],
-                            CoresAmount = (int)reader["AmountOfCores"],
-                            ThreadsAmount = (int)reader["AmountOfThreads"],
-                            IntegratedGraphics = (bool)reader["IntegratedGraphics"],
-                            Core = reader["Core"].ToString().Trim(),
-                            DeliveryType = reader["DeliveryType"].ToString().Trim(),
-                            Overcloacking = (bool)reader["Overclocking"]
-                        }
-                    );
-                }
+				reader.Close();
 
-                reader.Close();
+				if (cpus != null)
+				{
+					_cache.Set(
+						(request.Expression, request.Parameters),
+						cpus,
+						new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
+				}
+			}
 
-                if (cpus != null)
-                {
-                    _cache.Set(
-                        (request.Expression, request.Parameters),
-                        cpus,
-                        new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(12)));
-                }
-            }
-
-            return cpus;
+			return cpus;
         }
 
         /// <summary>
@@ -1406,7 +1370,7 @@ namespace ComputerComplectorWebAPI.Services
                             Capacity = (int)reader["Capacity"],
                             Family = reader["Family"].ToString().Trim(),
                             Connectors = new List<string>() { reader["Connector"].ToString().Trim() },
-                            Length = reader["Length"].ToString().Trim(),
+                            //Length = reader["Length"].ToString().Trim(),
                             Pin = reader["Pin"].ToString().Trim()
                         };
 
@@ -1670,6 +1634,46 @@ namespace ComputerComplectorWebAPI.Services
 		}
 
 		public Task<IEnumerable<Videocard>> ReplaceVideocard(UpdateVideocardRequest request)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> GetProperties(string component)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> AddProperty(string component, Property property)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> AddPropertyValue(string component, string propertyName, string value)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> RemoveProperty(string component, Property property)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> RemovePropertyValue(string component, string propertyName, string value)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> ChangeProperty(string component, Property oldProperty, Property newProperty)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IDictionary<string, string> GetDescription(string component)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Property>> AddPropertiesFromJSON(string component, string json)
 		{
 			throw new NotImplementedException();
 		}

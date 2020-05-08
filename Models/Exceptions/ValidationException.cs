@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace ComputerComplectorWebAPI.Models.Exceptions
 {
+	/// <summary>
+	/// Data model validation exception
+	/// </summary>
     public class ValidationException : Exception
     {
         public string ParameterName { get; private set; }

@@ -40,17 +40,17 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.Charger()
 			{
-				Company = charger.Company,
-				ConnectorType = charger.ConnectorType,
+				Company = charger.Company?.Trim(),
+				ConnectorType = charger.ConnectorType?.Trim(),
 				ID = charger.ID,
 				IDEAmount = charger.IDEAmount,
-				MotherboardConnector = charger.MotherboardConnector,
+				MotherboardConnector = charger.MotherboardConnector?.Trim(),
 				Power = charger.Power,
 				SATAAmount = charger.SATAAmount,
-				Series = charger.Series,
-				Sertificate80Plus = charger.Sertificate80Plus,
-				Title = charger.Title,
-				VideocardConnector = charger.VideocardConnector,
+				Series = charger.Series?.Trim(),
+				Sertificate80Plus = charger.Sertificate80Plus?.Trim(),
+				Title = charger.Title?.Trim(),
+				VideocardConnector = charger.VideocardConnector?.Trim(),
 				VideoConnectorsAmount = charger.VideoConnectorsAmount
 			};
 		}

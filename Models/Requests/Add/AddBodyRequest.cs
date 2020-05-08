@@ -7,11 +7,25 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
+	/// <summary>
+	/// Request of adding <see cref="Data.Body"/> to the DB
+	/// </summary>
     public class AddBodyRequest : AddRequestBase
     {
+		/// <summary>
+		/// Element to be added
+		/// </summary>
         private Body _element;
+
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
         private List<SqlParameter> _parameters;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
         public AddBodyRequest(Body element)
         {
             _element = element;
@@ -38,11 +52,6 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
                 _parameters.Add(new SqlParameter("@company", _element.Company));
             }
 
-            if (Validate<string>(_element.Formfactor, "element.Formfactor"))
-            {
-                _parameters.Add(new SqlParameter("@formfactor", _element.Formfactor));
-            }
-
             if (Validate<string>(_element.Title, "element.Title"))
             {
                 _parameters.Add(new SqlParameter("@title", _element.Title));
@@ -63,16 +72,34 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
                 _parameters.Add(new SqlParameter("@usb3Amount", _element.USB3Amount));
             }
 
-            if (Validate<int>(_element.VideocardMaxLength, "element.VideocardMaxLength"))
+            if (Validate<double>(_element.VideocardMaxLength, "element.VideocardMaxLength"))
             {
                 _parameters.Add(new SqlParameter("@vidoecardMaxLength", _element.VideocardMaxLength));
             }
-        }
 
+			if (_element.Formfactor != null && _element.Formfactor.Count > 0)
+			{
+				for (int i = 0; i < _element.Formfactor.Count; i++)
+				{
+					Expression += $"INSERT INTO BODY_FORMFACTOR VALUES (SELECT ID FROM BODY WHERE TITLE = @title, @formfactor{i});";
+					_parameters.Add(new SqlParameter($"@formfactor{i}", _element.Formfactor[i]));
+				}
+			}
+		}
+
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
         public string Expression { get; private set; } = "INSERT INTO BODY VALUES (@title, @company, @formfactor, @type, @buildInCharger, @chargerPower, @color, @usb3Amount, @addition, @usb2Amount, @vidoecardMaxLength);";
 
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
         public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public Body Body { get => _element; }
     }
 }

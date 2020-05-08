@@ -10,7 +10,7 @@ using ComputerComplectorWebAPI.Models.Requests.Get;
 namespace ComputerComplectorWebAPI.Interfaces
 {
     /// <summary>
-    /// User-controller interface
+    /// Interface of synchronous components provider service
     /// </summary>
     public interface IComponentsService
     {

@@ -31,14 +31,14 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.HDD()
 			{
-				Company = hdd.Company,
+				Company = hdd.Company?.Trim(),
 				ID = hdd.ID,
-				Title = hdd.Title,
+				Title = hdd.Title?.Trim(),
 				BufferVolume = hdd.BufferVolume,
 				Capacity = hdd.Capacity,
-				Formfactor = hdd.Formfactor,
-				Interface = hdd.Interface.Select(e => e.Interface).ToList(),
-				Series = hdd.Series,
+				Formfactor = hdd.Formfactor?.Trim(),
+				Interface = hdd.Interface?.Select(e => e.Interface.Trim()).ToList(),
+				Series = hdd.Series?.Trim(),
 				Speed = hdd.Speed
 			};
 		}
@@ -57,7 +57,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				Speed = hdd.Speed
 			};
 
-			el.Interface = hdd.Interface.Select(e => new HDDInterface() { HDD = el, Interface = e }).ToList();
+			el.Interface = hdd.Interface?.Select(e => new HDDInterface() { HDD = el, Interface = e }).ToList();
 			return el;
 		}
 

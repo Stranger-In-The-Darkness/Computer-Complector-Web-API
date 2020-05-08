@@ -40,16 +40,16 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 		{
 			return new DATA.Cooler()
 			{
-				Color = cooler.Color,
-				Company = cooler.Company,
-				Connector = cooler.Connector,
+				Color = cooler.Color?.Trim(),
+				Company = cooler.Company?.Trim(),
+				Connector = cooler.Connector?.Trim(),
 				ID = cooler.ID,
-				Material = cooler.Material,
-				Purpose = cooler.Purpose,
-				Socket = cooler.Socket.Select(s => s.Socket).ToList(),
-				Title = cooler.Title,
+				Material = cooler.Material?.Trim(),
+				Purpose = cooler.Purpose?.Trim(),
+				Socket = cooler.Socket?.Select(s => s.Socket.Trim()).ToList(),
+				Title = cooler.Title?.Trim(),
 				TurnAdj = cooler.Adjustement,
-				Type = cooler.Type,
+				Type = cooler.Type?.Trim(),
 				VentDiam = cooler.Diameter
 			};
 		}
@@ -69,7 +69,7 @@ namespace ComputerComplectorWebAPI.EntityFramework.Models.Data
 				Type = cooler.Type,
 				Diameter = cooler.VentDiam
 			};
-			e.Socket = cooler.Socket.Select(s => new CoolerSocket() { Cooler = e, Socket = s }).ToList();
+			e.Socket = cooler.Socket?.Select(s => new CoolerSocket() { Cooler = e, Socket = s }).ToList();
 			return e;
 		}
 

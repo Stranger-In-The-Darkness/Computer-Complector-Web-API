@@ -7,12 +7,26 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddMotherboardRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.Motherboard"/> to the DB
+	/// </summary>
+	public class AddMotherboardRequest : AddRequestBase
     {
-        private Motherboard _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private Motherboard _element;
 
-        public AddMotherboardRequest(Motherboard element)
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="element">Element to be added</param>
+		public AddMotherboardRequest(Motherboard element)
         {
             _element = element;
 
@@ -93,11 +107,20 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } = 
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } = 
             "INSERT INTO MOTHERBOARD VALUES (@title, @socket, @company, @chipset, @cpuComp, @formfactor, @memoryType, @memorySlots, @memoryChanels, @maxMemory, @maxRAMFreq, @series, @pin, @cpuPin);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public Motherboard Motherboard { get => _element; }
     }
 }

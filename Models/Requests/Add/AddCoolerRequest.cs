@@ -7,10 +7,20 @@ using ComputerComplectorWebAPI.Models.Data;
 
 namespace ComputerComplectorWebAPI.Models.Requests.Add
 {
-    public class AddCoolerRequest : AddRequestBase
+	/// <summary>
+	/// Request of adding <see cref="Data.Cooler"/> to the DB
+	/// </summary>
+	public class AddCoolerRequest : AddRequestBase
     {
-        private Cooler _element;
-        private List<SqlParameter> _parameters;
+		/// <summary>
+		/// Element to be added
+		/// </summary>
+		private Cooler _element;
+
+		/// <summary>
+		/// SQL query parameters
+		/// </summary>
+		private List<SqlParameter> _parameters;
 
         public AddCoolerRequest(Cooler element)
         {
@@ -65,10 +75,19 @@ namespace ComputerComplectorWebAPI.Models.Requests.Add
             }
         }
 
-        public string Expression { get; private set; } = "INSERT INTO COOLER VALUES (@title, @purpose, @type, @company, @material, @diameter, @adjst, @color, @connector);";
+		/// <summary>
+		/// SQL query adding new element
+		/// </summary>
+		public string Expression { get; private set; } = "INSERT INTO COOLER VALUES (@title, @purpose, @type, @company, @material, @diameter, @adjst, @color, @connector);";
 
-        public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
+		/// <summary>
+		/// SQL parameters for query
+		/// </summary>
+		public IEnumerable<SqlParameter> Parameters { get => _parameters; private set => _parameters = value.ToList(); }
 
+		/// <summary>
+		/// Element to be added
+		/// </summary>
 		public Cooler Cooler { get => _element; }
     }
 }

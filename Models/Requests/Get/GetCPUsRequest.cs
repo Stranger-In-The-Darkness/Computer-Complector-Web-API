@@ -17,7 +17,7 @@ namespace ComputerComplectorWebAPI.Models.Requests.Get
         public bool[]    IntegratedGraphics  { get; set; }
         public string[]  Core                { get; set; }
         public string[]  DeliveryType        { get; set; }
-        public bool[]    Overcloacking       { get; set; }
+        public bool[]    Overclocking       { get; set; }
 
         public int? SelectedCooler { get; private set; }
         public int? SelectedMotherboard { get; private set; }
@@ -127,14 +127,14 @@ namespace ComputerComplectorWebAPI.Models.Requests.Get
                 cond.Add(string.Join(" OR ", con));
             }
 
-            Overcloacking = overcloacking;
-            if (Overcloacking != null)
+            Overclocking = overcloacking;
+            if (Overclocking != null)
             {
                 List<string> con = new List<string>();
-                for (int i = 0; i < Overcloacking.Length; i++)
+                for (int i = 0; i < Overclocking.Length; i++)
                 {
                     con.Add($"Overclocking=@overcloacking{i}");
-                    Parameters.Add(new SqlParameter($"@overcloacking{i}", Overcloacking[i]));
+                    Parameters.Add(new SqlParameter($"@overcloacking{i}", Overclocking[i]));
                 }
                 cond.Add(string.Join(" OR ", con));
             }
