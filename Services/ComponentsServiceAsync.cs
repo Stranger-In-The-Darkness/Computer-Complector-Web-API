@@ -15,6 +15,8 @@ using ComputerComplectorWebAPI.Models.Requests.Get;
 using ComputerComplectorWebAPI.Models.Requests.Add;
 using ComputerComplectorWebAPI.Models.Requests.Remove;
 using ComputerComplectorWebAPI.Models.Requests.Update;
+using ComputerComplectorWebAPI.Models.Statistics.Requests;
+using ComputerComplectorWebAPI.Models.Data.Special;
 
 namespace ComputerComplectorWebAPI.Services
 {
@@ -1678,5 +1680,40 @@ namespace ComputerComplectorWebAPI.Services
 			throw new NotImplementedException();
 		}
 		#endregion
+
+		public Task<IEnumerable<RuleRelation>> GetRelations()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IEnumerable<Models.Data.Special.Rule>> GetRules(string component)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IDictionary<int, int>> GetRecommended(GetRecommendationRequest request, int? amount = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task AddSelected(AddSelectionRequest request)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task AddRule(Models.Data.Special.Rule rule)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task DeleteRule(Models.Data.Special.Rule rule)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task UpdateRule(Models.Data.Special.Rule oldRule, Models.Data.Special.Rule newRule)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

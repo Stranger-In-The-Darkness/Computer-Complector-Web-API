@@ -5,16 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models.Analytics
-{
-	public class PropertyValue
+namespace ComputerComplectorWebAPI.Models.Data.Special
+{	
+	[Table("RULE_RELATIONS")]
+	public class RuleRelation
 	{
 		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int ID { get; set; }
-		public string Value { get; set; }
 		[Required]
-		public int PropertyID { get; set; }
-		[ForeignKey("PropertyID")]
-		public Property Property { get; set; }
+		public string Relation { get; set; }
 	}
 }

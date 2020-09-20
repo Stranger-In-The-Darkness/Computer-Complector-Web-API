@@ -1,4 +1,6 @@
 ﻿using ComputerComplectorWebAPI.EntityFramework.Models.Data;
+using ComputerComplectorWebAPI.Models.Statistics;
+using ComputerComplectorWebAPI.Models.Data.Special;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComputerComplectorWebAPI.DataContext
@@ -92,6 +94,19 @@ namespace ComputerComplectorWebAPI.DataContext
 		/// Propety values table
 		/// </summary>
 		public DbSet<PropertyValue> PropertyValues { get; set; }
+
+		/// <summary>
+		/// Recommendations table
+		/// </summary>
+		public DbSet<Selection> Selections { get; set; }
+
+		public DbSet<SelectionProperties> SelectionProperties { get; set; }
+
+		public DbSet<RuleRelation> RuleRelations { get; set; }
+
+		public DbSet<Rule> Rules { get; set; }
+
+		public DbSet<RuleType> RuleTypes { get; set; }
 
 		public ComponentsContext(DbContextOptions<ComponentsContext> options) : base(options)
 		{

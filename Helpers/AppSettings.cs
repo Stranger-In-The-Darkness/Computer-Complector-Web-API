@@ -1,4 +1,4 @@
-﻿using ComputerComplectorWebAPI.Models.Analytics;
+﻿using ComputerComplectorWebAPI.Models.Statistics;
 
 namespace ComputerComplectorWebAPI.Helpers
 {

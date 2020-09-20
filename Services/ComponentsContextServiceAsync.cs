@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 using ComputerComplectorWebAPI.DataContext;
 using ComputerComplectorWebAPI.Interfaces;
+using ComputerComplectorWebAPI.Models.Statistics;
+using ComputerComplectorWebAPI.Models.Statistics.Requests;
 using ComputerComplectorWebAPI.Models.Data;
+using ComputerComplectorWebAPI.Models.Data.Special;
 using ComputerComplectorWebAPI.Models.Requests.Add;
 using ComputerComplectorWebAPI.Models.Requests.Get;
 using ComputerComplectorWebAPI.Models.Requests.Remove;
@@ -291,12 +294,13 @@ namespace ComputerComplectorWebAPI.Services
 				bodies = 
 					bodies.Select(e => 
 					{
-						e.Compatible = CheckCompatibility("body", "motherboard", e, motherboard, out string comp);
-						if (comp != "")
+						var comp = CheckCompatibility("body", "motherboard", e, motherboard).Result;
+						e.Compatible &= comp.Item1;
+						if (comp.Item2 != "")
 						{
 							e.Incompatible = new Dictionary<string, string>
 							{
-								{ "motherboard", comp }
+								{ "motherboard", comp.Item2 }
 							};
 						}
 						return e;
@@ -309,14 +313,15 @@ namespace ComputerComplectorWebAPI.Services
 				bodies = 
 					bodies.Select(e =>
 					{
-						e.Compatible &= CheckCompatibility("body", "videocard", e, videocard, out string comp);
-						if (comp != "")
+						var comp = CheckCompatibility("body", "videocard", e, videocard).Result;
+						e.Compatible &= comp.Item1;
+						if (comp.Item2 != "")
 						{
 							if (e.Incompatible == null)
 							{
 								e.Incompatible = new Dictionary<string, string>();
 							}
-							e.Incompatible.Add("videocard", comp);
+							e.Incompatible.Add("videocard", comp.Item2);
 						}
 						return e;
 					}).ToList();
@@ -355,13 +360,15 @@ namespace ComputerComplectorWebAPI.Services
 				var motherboard = await GetMotherboard(request.SelectedMotherboard ?? -1);
 				chargers = chargers.Select(e =>
 				{
-					e.Compatible = CheckCompatibility("charger", "motherboard", e, motherboard, out string comp);
+					var comp = CheckCompatibility("charger", "motherboard", e, motherboard).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "motherboard", comp }
+							{ "motherboard", comp.Item2 }
 						};
 					}
 					return e;
@@ -373,15 +380,17 @@ namespace ComputerComplectorWebAPI.Services
 				var videocard = await GetVideocard(request.SelectedVideocard ?? -1);
 				chargers = chargers.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("charger", "videocard", e, videocard, out string comp);
+					var comp = CheckCompatibility("charger", "videocard", e, videocard).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("videocard", comp);
+						e.Incompatible.Add("videocard", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -418,14 +427,15 @@ namespace ComputerComplectorWebAPI.Services
 				var cpu = await GetCPU(request.SelectedCpu ?? -1);
 				coolers = coolers.Select(e =>
 				{
+					var comp = CheckCompatibility("cooler", "cpu", e, cpu).Result;
 
-					e.Compatible = CheckCompatibility("cooler", "cpu", e, cpu, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "cpu", comp }
+							{ "cpu", comp.Item2 }
 						};
 					}
 					return e;
@@ -437,16 +447,17 @@ namespace ComputerComplectorWebAPI.Services
 				var motherboard = await GetMotherboard(request.SelectedMotherboard ?? -1);
 				coolers = coolers.Select(e =>
 				{
+					var comp = CheckCompatibility("cooler", "motherboard", e, motherboard).Result;
 
-					e.Compatible &= CheckCompatibility("cooler", "motherboard", e, motherboard, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("motherboard", comp);
+						e.Incompatible.Add("motherboard", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -485,14 +496,15 @@ namespace ComputerComplectorWebAPI.Services
 				var cooler = await GetCooler(request.SelectedCooler ?? -1);
 				cpus = cpus.Select(e =>
 				{
+					var comp = CheckCompatibility("cpu", "cooler", e, cooler).Result;
 
-					e.Compatible = CheckCompatibility("cpu", "cooler", e, cooler, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "cooler", comp }
+							{ "cooler", comp.Item2 }
 						};
 					}
 					return e;
@@ -504,16 +516,17 @@ namespace ComputerComplectorWebAPI.Services
 				var motherboard = await GetMotherboard(request.SelectedMotherboard ?? -1);
 				cpus = cpus.Select(e =>
 				{
+					var comp = CheckCompatibility("cpu", "motherboard", e, motherboard).Result;
 
-					e.Compatible &= CheckCompatibility("cpu", "motherboard", e, motherboard, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("motherboard", comp);
+						e.Incompatible.Add("motherboard", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -550,14 +563,15 @@ namespace ComputerComplectorWebAPI.Services
 				var motherboard = await GetMotherboard(request.SelectedMotherboard ?? -1);
 				hdds = hdds.Select(e =>
 				{
+					var comp = CheckCompatibility("hdd", "motherboard", e, motherboard).Result;
 
-					e.Compatible = CheckCompatibility("hdd", "motherboard", e, motherboard, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "motherboard", comp }
+							{ "motherboard", comp.Item2 }
 						};
 					}
 					return e;
@@ -599,14 +613,15 @@ namespace ComputerComplectorWebAPI.Services
 				var body = await GetBody(request.SelectedBody ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
+					var comp = CheckCompatibility("motherboard", "body", e, body).Result;
 
-					e.Compatible = CheckCompatibility("motherboard", "body", e, body, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "body", comp }
+							{ "body", comp.Item2 }
 						};
 					}
 					return e;
@@ -618,16 +633,17 @@ namespace ComputerComplectorWebAPI.Services
 				var charger = await GetCharger(request.SelectedCharger ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
+					var comp = CheckCompatibility("motherboard", "charger", e, charger).Result;
 
-					e.Compatible &= CheckCompatibility("motherboard", "charger", e, charger, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("charger", comp);
+						e.Incompatible.Add("charger", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -638,15 +654,17 @@ namespace ComputerComplectorWebAPI.Services
 				var cooler = await GetCooler(request.SelectedCooler ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("motherboard", "cooler", e, cooler, out string comp);
+					var comp = CheckCompatibility("motherboard", "cooler", e, cooler).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("cooler", comp);
+						e.Incompatible.Add("cooler", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -657,15 +675,16 @@ namespace ComputerComplectorWebAPI.Services
 				var cpu = await GetCPU(request.SelectedCpu ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("motherboard", "cpu", e, cpu, out string comp);
+					var comp = CheckCompatibility("motherboard", "cpu", e, cpu).Result;
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("cpu", comp);
+						e.Incompatible.Add("cpu", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -676,15 +695,17 @@ namespace ComputerComplectorWebAPI.Services
 				var hdd = await GetHDD(request.SelectedHdd ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("motherboard", "hdd", e, hdd, out string comp);
+					var comp = CheckCompatibility("motherboard", "hdd", e, hdd).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("hdd", comp);
+						e.Incompatible.Add("hdd", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -695,15 +716,17 @@ namespace ComputerComplectorWebAPI.Services
 				var ram = await GetRAM(request.SelectedRam ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("motherboard", "ram", e, ram, out string comp);
+					var comp = CheckCompatibility("motherboard", "ram", e, ram).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("ram", comp);
+						e.Incompatible.Add("ram", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -714,15 +737,17 @@ namespace ComputerComplectorWebAPI.Services
 				var ssd = await GetSSD(request.SelectedSsd ?? -1);
 				motherboards = motherboards.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("motherboard", "ssd", e, ssd, out string comp);
+					var comp = CheckCompatibility("motherboard", "ssd", e, ssd).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("ssd", comp);
+						e.Incompatible.Add("ssd", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -760,13 +785,15 @@ namespace ComputerComplectorWebAPI.Services
 				var motherboard = await GetMotherboard(request.SelectedMotherboard ?? -1);
 				rams = rams.Select(e =>
 				{
-					e.Compatible = CheckCompatibility("ram", "motherboard", e, motherboard, out string comp);
+					var comp = CheckCompatibility("ram", "motherboard", e, motherboard).Result;
 
-					if (comp != "")
+					e.Compatible &= comp.Item1;
+
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "motherboard", comp }
+							{ "motherboard", comp.Item2 }
 						};
 					}
 					return e;
@@ -803,14 +830,15 @@ namespace ComputerComplectorWebAPI.Services
 				var motherboard = await GetMotherboard(request.SelectedMotherboard ?? -1);
 				ssds = ssds.Select(e =>
 				{
+					var comp = CheckCompatibility("ssd", "motherboard", e, motherboard).Result;
 
-					e.Compatible = CheckCompatibility("ssd", "motherboard", e, motherboard, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "motherboard", comp }
+							{ "motherboard", comp.Item2 }
 						};
 					}
 					return e;
@@ -848,14 +876,15 @@ namespace ComputerComplectorWebAPI.Services
 				var body = await GetBody(request.SelectedBody ?? -1);
 				videocards = videocards.Select(e =>
 				{
+					var comp = CheckCompatibility("videocard", "body", e, body).Result;
 
-					e.Compatible = CheckCompatibility("videocard", "body", e, body, out string comp);
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						e.Incompatible = new Dictionary<string, string>
 						{
-							{ "body", comp }
+							{ "body", comp.Item2 }
 						};
 					}
 					return e;
@@ -866,15 +895,16 @@ namespace ComputerComplectorWebAPI.Services
 				var charger = await GetCharger(request.SelectedCharger ?? -1);
 				videocards = videocards.Select(e =>
 				{
-					e.Compatible &= CheckCompatibility("videocard", "charger", e, charger, out string comp);
+					var comp = CheckCompatibility("videocard", "charger", e, charger).Result;
+					e.Compatible &= comp.Item1;
 
-					if (comp != "")
+					if (comp.Item2 != "")
 					{
 						if (e.Incompatible == null)
 						{
 							e.Incompatible = new Dictionary<string, string>();
 						}
-						e.Incompatible.Add("charger", comp);
+						e.Incompatible.Add("charger", comp.Item2);
 					}
 					return e;
 				}).ToList();
@@ -899,7 +929,8 @@ namespace ComputerComplectorWebAPI.Services
 
 		public IDictionary<string, string> GetDescription(string component)
 		{
-			if (!_cache.TryGetValue($"{component}-descr", out object res))
+			object res = null;
+			if ((!_cache?.TryGetValue($"{component}-descr", out res)) ?? true)
 			{
 				System.Reflection.PropertyInfo[] prop = null;
 				switch (component.ToLower())
@@ -933,10 +964,10 @@ namespace ComputerComplectorWebAPI.Services
 						break;
 				}
 
-				res = prop.Select(e => new { e.Name, Type = e.PropertyType.Name }).ToDictionary(e => e.Name, e => e.Type);
+				res = prop.Select(e => new { e.Name, Type = e.PropertyType.FullName }).ToDictionary(e => e.Name, e => e.Type);
 				_cache.Set($"{component}-descr", res);
 			}
-			return (IDictionary<string, string>)res;
+			return res as IDictionary<string, string>;
 		}
 		#endregion
 
@@ -1786,45 +1817,57 @@ namespace ComputerComplectorWebAPI.Services
 		/// <param name="element2">Element to check compatibily with</param>
 		/// <param name="incompatible">Incompatible properties</param>
 		/// <returns>True - if components are fully compatible. False - if not</returns>
-		private bool CheckCompatibility(string type1, string type2, object element1, object element2, out string incompatible)
+		private async Task<Tuple<bool, string>> CheckCompatibility(string type1, string type2, object element1, object element2)
 		{
-			incompatible = "";
+			string incompatible = "";
+
+			var rules = await _dbContext.Rules.Include(e => e.Relation).Where(e => e.FirstComponent == type1 && e.SecondComponent == type2).ToListAsync();
 
 			bool res = true;
-			LuaTable table = (_compatibility[type1] as LuaTable)[type2] as LuaTable;
 
-			var t1p = table[type1];
-			var t2p = table[type2];
-			var cond = table["condition"];
-
-			Type t1t = element1.GetType();
-			Type t2t = element2.GetType();
-
-			if (t1p is LuaTable)
+			foreach (var rule in rules)
 			{
-				var t1ps = t1p as LuaTable;
-				var t2ps = t1p as LuaTable;
-				var conditions = cond as LuaTable;
-
-				var t1enum = t1ps.Values.GetEnumerator();
-				var t2enum = t2ps.Values.GetEnumerator();
-				var cenum = conditions.Values.GetEnumerator();
-				while (t1enum.MoveNext() && t2enum.MoveNext() && cenum.MoveNext())
+				CheckCondition(rule.Relation.Relation, element1, element2, element1.GetType(), element2.GetType(), rule.FirstProperty, rule.SecondProperty, out bool r);
+				res &= r;
+				if (!r)
 				{
-					if (!CheckCondition(cenum.Current.ToString(), t1enum.Current, t2enum.Current, t1t, t2t, t1enum.Current.ToString(), t2enum.Current.ToString(), out res))
-					{
-						incompatible += incompatible == "" ? t2enum.Current.ToString() : $", {t2enum.Current.ToString()}";
-					}
+					incompatible += incompatible == "" ? $"{rule.SecondComponent}.{rule.SecondProperty}": $", {rule.SecondComponent}.{rule.SecondProperty}";
 				}
 			}
-			else
-			{
-				if (!CheckCondition(cond.ToString(), element1, element2, t1t, t2t, t1p.ToString(), t2p.ToString(), out res))
-				{
-					incompatible += incompatible == "" ? t2p.ToString() : $", {t2p.ToString()}";
-				}
-			}
-			return res;
+			//LuaTable table = (_compatibility[type1] as LuaTable)[type2] as LuaTable;
+
+			//var t1p = table[type1];
+			//var t2p = table[type2];
+			//var cond = table["condition"];
+
+			//Type t1t = element1.GetType();
+			//Type t2t = element2.GetType();
+
+			//if (t1p is LuaTable)
+			//{
+			//	var t1ps = t1p as LuaTable;
+			//	var t2ps = t1p as LuaTable;
+			//	var conditions = cond as LuaTable;
+
+			//	var t1enum = t1ps.Values.GetEnumerator();
+			//	var t2enum = t2ps.Values.GetEnumerator();
+			//	var cenum = conditions.Values.GetEnumerator();
+			//	while (t1enum.MoveNext() && t2enum.MoveNext() && cenum.MoveNext())
+			//	{
+			//		if (!CheckCondition(cenum.Current.ToString(), t1enum.Current, t2enum.Current, t1t, t2t, t1enum.Current.ToString(), t2enum.Current.ToString(), out res))
+			//		{
+			//			incompatible += incompatible == "" ? t2enum.Current.ToString() : $", {t2enum.Current.ToString()}";
+			//		}
+			//	}
+			//}
+			//else
+			//{
+			//	if (!CheckCondition(cond.ToString(), element1, element2, t1t, t2t, t1p.ToString(), t2p.ToString(), out res))
+			//	{
+			//		incompatible += incompatible == "" ? t2p.ToString() : $", {t2p.ToString()}";
+			//	}
+			//}
+			return new Tuple<bool, string>(res, incompatible);
 		}
 
 		/// <summary>
@@ -1975,6 +2018,64 @@ namespace ComputerComplectorWebAPI.Services
 				};
 				await _dbContext.PropertyValues.AddAsync(val);
 				await _dbContext.SaveChangesAsync();
+			}
+		}
+
+		public async Task<IEnumerable<RuleRelation>> GetRelations()
+		{
+			return await _dbContext.RuleRelations.ToListAsync();
+		}
+
+		public async Task<IEnumerable<Rule>> GetRules(string component)
+		{
+			return await _dbContext.Rules.Include(e => e.Relation).Include(e => e.RuleType).Where(e => e.FirstComponent == component).ToListAsync();
+		}
+
+		public async Task AddRule(Rule rule)
+		{
+			rule.RuleTypeID = _dbContext.RuleTypes.First(e => e.Type == "USER").ID;
+			await _dbContext.Rules.AddAsync(rule);
+			await _dbContext.SaveChangesAsync();
+		}
+
+		public async Task DeleteRule(Rule rule)
+		{
+			var r = (await _dbContext.Rules.Include(e => e.Relation).Include(e => e.RuleType).ToListAsync()).First(e => e.Equals(rule));
+			if (r != null)
+			{
+				if (r.RuleTypeID == (await _dbContext.RuleTypes.FirstAsync(e => e.Type == "CORE")).ID)
+				{
+					throw new InvalidOperationException("Cannot delete core rule! Operation aborted!");
+				}
+				else
+				{
+					_dbContext.Rules.Remove(r);
+					await _dbContext.SaveChangesAsync();
+				}
+			}
+		}
+
+		public async Task UpdateRule(Rule oldRule, Rule newRule)
+		{
+			var r = (await _dbContext.Rules.Include(e => e.Relation).Include(e => e.RuleType).ToListAsync()).First(e => e.Equals(oldRule));
+			if (r != null)
+			{
+				if (r.RuleTypeID == (await _dbContext.RuleTypes.FirstAsync(e => e.Type == "CORE")).ID)
+				{
+					throw new InvalidOperationException("Cannot delete core rule! Operation aborted!");
+				}
+				else
+				{
+					r.FirstComponent = newRule.FirstComponent;
+					r.FirstProperty = newRule.FirstProperty;
+					r.RelationID = (await _dbContext.RuleRelations.FirstAsync(e => e.Relation == newRule.Relation.Relation)).ID;
+					r.RuleTypeID = (await _dbContext.RuleTypes.FirstAsync(e => e.Type == "USER")).ID;
+					r.SecondComponent = newRule.SecondComponent;
+					r.SecondProperty = newRule.SecondProperty;
+
+					_dbContext.Entry<Rule>(r).State = EntityState.Modified;
+					await _dbContext.SaveChangesAsync();
+				}
 			}
 		}
 	}

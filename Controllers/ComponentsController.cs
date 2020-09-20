@@ -19,6 +19,8 @@ using ComputerComplectorWebAPI.Models.Requests.Remove;
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
+using ComputerComplectorWebAPI.Models.Data.Special;
+using ComputerComplectorWebAPI.Models.Statistics.Requests;
 
 namespace ComputerComplectorWebAPI.Controllers
 {
@@ -32,7 +34,7 @@ namespace ComputerComplectorWebAPI.Controllers
 		/// <summary>
 		/// Components DB service
 		/// </summary>
-        private IComponentsServiceAsync _componentService;
+		private IComponentsServiceAsync _componentService;
 
 		/// <summary>
 		/// Localization service
@@ -43,6 +45,8 @@ namespace ComputerComplectorWebAPI.Controllers
 		/// Logger
 		/// </summary>
 		private ILogger<ComponentsController> _logger;
+
+		private Compatibility _compatibility;
 
 		/// <summary>
 		/// 
@@ -177,14 +181,15 @@ namespace ComputerComplectorWebAPI.Controllers
 			return json;
 		}
 
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Get all records
-        /// </summary>
-        /// <returns><see cref="IEnumerable{Body}"/> of <see cref="Body"/> objects</returns>
-        // GET api/components/bodies
-        [HttpGet, Route("bodies")]
+		#region RECORDS
+		/// <summary>
+		/// Get all records
+		/// </summary>
+		/// <returns><see cref="IEnumerable{Body}"/> of <see cref="Body"/> objects</returns>
+		// GET api/components/bodies
+		[HttpGet, Route("bodies")]
         public async Task<IEnumerable<Body>> GetAllBodies()
         {            
             return await _componentService.GetBodies();
@@ -670,7 +675,9 @@ namespace ComputerComplectorWebAPI.Controllers
             return await _componentService.GetVideocard(id);
         }
 
-		[HttpGet("{component}/description")]
+		#endregion
+
+		[HttpGet("description/{component}")]
 		public IDictionary<string, string> GetComponentDescription(string component)
 		{
 			return _componentService.GetDescription(component);
@@ -1094,6 +1101,39 @@ namespace ComputerComplectorWebAPI.Controllers
         {
 			return await _componentService.RemoveVideocard(new RemoveVideocardRequest(id));
 		}
-        #endregion
-    }
+
+		[HttpGet("compatibility/rules")]
+		public async Task<IEnumerable<Rule>> GetCompatibilityRules([FromQuery(Name = "component")]string component)
+		{
+			return await _componentService.GetRules(component);
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPost("compatibility/rules")]
+		public async Task AddCompatibilityRule([FromBody]Rule rule)
+		{
+			await _componentService.AddRule(rule);
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpDelete("compatibility/rules")]
+		public async Task DeleteCompatibilityRule([FromBody]Rule rule)
+		{
+			await _componentService.DeleteRule(rule);
+		}
+
+		[Authorize(Roles = "ADMIN")]
+		[HttpPut("compatibility/rules")]
+		public async Task UpdateCompatibilityRule([FromBody]Tuple<Rule, Rule> rule)
+		{
+			await _componentService.UpdateRule(rule.Item1, rule.Item2);
+		}
+
+		[HttpGet("compatibility/rules/relations")]
+		public async Task<IEnumerable<RuleRelation>> GetCompatibilityRuleRelations()
+		{
+			return await _componentService.GetRelations();
+		}
+		#endregion
+	}
 }

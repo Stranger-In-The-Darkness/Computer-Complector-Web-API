@@ -4,9 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using ComputerComplectorWebAPI.EntityFramework.Models.Data;
 
-namespace ComputerComplectorWebAPI.Models.Analytics
+namespace ComputerComplectorWebAPI.Models.Statistics
 {
+	[Table("SELECTION_PROPERTIES")]
 	public class SelectionProperties
 	{
 		[Required]

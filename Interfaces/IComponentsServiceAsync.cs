@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ComputerComplectorWebAPI.Models;
+using ComputerComplectorWebAPI.Models.Statistics.Requests;
 using ComputerComplectorWebAPI.Models.Data;
+using ComputerComplectorWebAPI.Models.Data.Special;
 using ComputerComplectorWebAPI.Models.Requests.Add;
 using ComputerComplectorWebAPI.Models.Requests.Get;
 using ComputerComplectorWebAPI.Models.Requests.Remove;
@@ -89,5 +91,13 @@ namespace ComputerComplectorWebAPI.Interfaces
 		Task<IEnumerable<Property>> ChangeProperty(string component, Property oldProperty, Property newProperty);
 
 		IDictionary<string, string> GetDescription(string component);
+
+		Task<IEnumerable<RuleRelation>> GetRelations();
+
+		Task<IEnumerable<Rule>> GetRules(string component);
+
+		Task AddRule(Rule rule);
+		Task DeleteRule(Rule rule);
+		Task UpdateRule(Rule oldRule, Rule newRule);
 	}
 }

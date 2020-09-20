@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models.Analytics.Requests
+namespace ComputerComplectorWebAPI.Models.Statistics.Requests
 {
 	public class GetRecommendationRequest
 	{

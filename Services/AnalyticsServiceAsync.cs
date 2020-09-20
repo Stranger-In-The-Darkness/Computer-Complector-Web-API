@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 using ComputerComplectorWebAPI.DataContext;
 using ComputerComplectorWebAPI.Interfaces;
-using ComputerComplectorWebAPI.Models.Analytics;
-using ComputerComplectorWebAPI.Models.Analytics.Requests;
-
+using ComputerComplectorWebAPI.Models.Statistics;
+using ComputerComplectorWebAPI.Models.Statistics.Requests;
+using ComputerComplectorWebAPI.Models.Data.Special;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -16,17 +16,12 @@ namespace ComputerComplectorWebAPI.Services
 	/// <summary>
 	/// Asynchronous analytic data service
 	/// </summary>
-	public class AnalyticsServiceAsync : IAnalyticsServiceAsync
+	public class AnalyticsServiceAsync : IStatisticsServiceAsync
 	{
 		/// <summary>
 		/// Analytic data DB context
 		/// </summary>
-		private StatisticsContext _dbContext;
-
-		/// <summary>
-		/// Components data DB context
-		/// </summary>
-		private IComponentsServiceAsync _componentsService;
+		private ComponentsContext _dbContext;
 
 		/// <summary>
 		/// Logger
@@ -39,10 +34,9 @@ namespace ComputerComplectorWebAPI.Services
 		/// <param name="dbContext">Analytic data DB context</param>
 		/// <param name="componentsService">Components data DB context</param>
 		/// <param name="logger">Logger</param>
-		public AnalyticsServiceAsync(StatisticsContext dbContext, IComponentsServiceAsync componentsService, ILogger<AnalyticsServiceAsync> logger)
+		public AnalyticsServiceAsync(ComponentsContext dbContext, ILogger<AnalyticsServiceAsync> logger)
 		{
 			_dbContext = dbContext;
-			_componentsService = componentsService;
 			_logger = logger;
 		}
 
@@ -57,9 +51,9 @@ namespace ComputerComplectorWebAPI.Services
 
 			await _dbContext.Selections.AddAsync(selection);
 
-			for (int i = 0; i< request.Properties.Count; i++)
+			for (int i = 0; i < request.Properties.Count; i++)
 			{
-				var property = await _dbContext.Properties.Where(e => e.ComponentType == request.ComponentType && e.Name == request.Properties.Keys.ElementAt(i)).FirstOrDefaultAsync();
+				var property = await _dbContext.Properties.Where(e => e.Component == request.ComponentType && e.Name == request.Properties.Keys.ElementAt(i)).FirstOrDefaultAsync();
 				var value = property.Values.Where(e => e.Value == request.Properties[property.Name]).FirstOrDefault();
 				SelectionProperties selectionProperties = new SelectionProperties()
 				{
@@ -131,89 +125,6 @@ namespace ComputerComplectorWebAPI.Services
 					ToDictionaryAsync(e => e.Key, e => e.Sum);
 				return list;
 			}
-		}
-
-		/// <summary>
-		/// Return properties of specified component type
-		/// </summary>
-		/// <param name="componentType">Component type</param>
-		/// <returns><see cref="IEnumerable{T}"/> of properties</returns>
-		public async Task<IEnumerable<string>> GetProperties(string componentType)
-		{
-			return await _dbContext.Properties.Where(e => e.ComponentType == componentType).Select(e => e.Name).ToListAsync();
-		}
-
-		/// <summary>
-		/// Return property values of specified property of specified component type
-		/// </summary>
-		/// <param name="componentType">Component type</param>
-		/// <param name="property">Property name</param>
-		/// <returns><see cref="IEnumerable{T}"/> of values of properties</returns>
-		public async Task<IEnumerable<string>> GetPropertyValues(string componentType, string property)
-		{
-			return (await _dbContext.Properties.Where(e => e.ComponentType == componentType && e.Name == property).FirstOrDefaultAsync()).Values.Select(e => e.Value).ToArray();
-		}
-
-		/// <summary>
-		/// Add property to component type
-		/// </summary>
-		/// <param name="componentType">Component type</param>
-		/// <param name="name">New property name</param>
-		/// <returns>Updated <see cref="IEnumerable{T}"/> of properties</returns>
-		public async Task<IEnumerable<string>> AddProperty(string componentType, string name)
-		{
-			Property property = new Property()
-			{
-				ComponentType = componentType,
-				Name = name
-			};
-
-			try
-			{
-				await _dbContext.Properties.AddAsync(property);
-				await _dbContext.SaveChangesAsync();
-				_logger.LogInformation("Added new property: {0} (ID), {1} (Name)", _dbContext.Properties.FirstOrDefault(e => e.ComponentType == componentType & e.Name == name).ID, name);
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e, "Cannot add new property. Component type: {0}. Property name: {1}.", componentType, property);
-				throw;
-			}
-
-			return await GetProperties(componentType);
-		}
-
-		/// <summary>
-		/// Add new value to the property of component type
-		/// </summary>
-		/// <param name="componentType">Component type</param>
-		/// <param name="property">Property to add value for</param>
-		/// <param name="value">New property value</param>
-		/// <returns>Updated <see cref="IEnumerable{T}"/> of values of properties</returns>
-		public async Task<IEnumerable<string>> AddPropertyValue(string componentType, string property, string value)
-		{
-			var prop = await _dbContext.Properties.FirstOrDefaultAsync(e => e.Name == property);
-
-			var val = new PropertyValue()
-			{
-				Property = prop,
-				PropertyID = prop.ID,
-				Value = value
-			};
-
-			try
-			{
-				await _dbContext.PropertyValues.AddAsync(val);
-				await _dbContext.SaveChangesAsync();
-				_logger.LogInformation("Added newproperty value: {0} (ID), {1} (Property), {2} (Value)", _dbContext.PropertyValues.FirstOrDefault(e => e.Property == prop).ID, prop.Name, value);
-			}
-			catch (Exception e)
-			{
-				_logger.LogError(e, "Cannot add new property value. Component type: {0}. Property name: {1}. Porperty value: {2}.", componentType, property, value);
-				throw;
-			}
-
-			return await GetPropertyValues(componentType, property);
 		}
 	}
 }

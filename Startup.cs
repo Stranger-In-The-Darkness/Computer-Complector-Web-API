@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define USE_TEST_SERVER
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ using ComputerComplectorWebAPI.DataContext;
 using ComputerComplectorWebAPI.Helpers;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using ComputerComplectorWebAPI.Models.Data.Special;
 
 namespace ComputerComplectorWebService
 {
@@ -66,33 +69,25 @@ namespace ComputerComplectorWebService
 				};
 			});
 
-			services.AddScoped<IUserService, UserService>();
+			appSettings.Secret = null;
 
 			#endregion
 
-			appSettings.Secret = null;
 			services.AddSingleton(appSettings);
 
+#if USE_TEST_SERVER
+			string componentsConnection = Configuration.GetConnectionString("TestConnection");
+#else
 			string componentsConnection = Configuration.GetConnectionString("DefaultConnection");
-			//string componentsConnection = Configuration.GetConnectionString("TestConnection");
+#endif
 			string usersConnection = Configuration.GetConnectionString("UsersConnection");
-			string analyticsConnection = Configuration.GetConnectionString("AnalyticsConnection");
 
-			//if (Environment.GetEnvironmentVariable("USE_ENTITY") == "true")
-			//{
 			services.AddDbContext<ComponentsContext>(options => options.UseSqlServer(componentsConnection));
-			services.AddScoped<IComponentsServiceAsync, ComponentsContextServiceAsync>();
-			//}
-			//else
-			//{
-			//	services.AddScoped<IUtilityAsync>((conn) => new DBUtility(componentsConnection));
-			//	services.AddScoped<IComponentsServiceAsync, ComponentsServiceAsync>();
-			//}
-
 			services.AddDbContext<UsersContext>(options => options.UseSqlServer(usersConnection));
 
-			services.AddDbContext<StatisticsContext>(options => options.UseSqlServer(analyticsConnection));
-			services.AddScoped<IAnalyticsServiceAsync, AnalyticsServiceAsync>();
+			services.AddScoped<IComponentsServiceAsync, ComponentsContextServiceAsync>();
+			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IStatisticsServiceAsync, AnalyticsServiceAsync>();
 
 			services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddSingleton<IConfiguration>(Configuration);

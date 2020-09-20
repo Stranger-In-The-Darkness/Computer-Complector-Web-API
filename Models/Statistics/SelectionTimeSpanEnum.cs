@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ComputerComplectorWebAPI.Models.Analytics
+namespace ComputerComplectorWebAPI.Models.Statistics
 {
 	public enum SelectionTimeSpan
 	{
